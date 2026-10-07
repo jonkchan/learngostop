@@ -21,7 +21,7 @@ const steps: ReactNode[] = [
   </>,
   <>
     <b>Claim your pairs off the table</b> and keep them face-up <b>in front of you</b>. Sort <b>each card</b> by
-    its own type, not by pair, so a pair can split across piles (see below).
+    its own type, not by pair, so a pair can split across piles. <b>Never refill the table.</b>
   </>,
   <>
     <b>Check your score.</b> If you reached the target, or scored more since your last Go, call <b>Go</b> or{" "}
@@ -229,7 +229,7 @@ export function RulesPage() {
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
           <div data-tour="plays">
-            <Terms items={specialPlays} demos rowY="py-[1.3pt]" />
+            <Terms items={specialPlays} demos rowY="py-[1.2pt]" />
           </div>
         </div>
 
