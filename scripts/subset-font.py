@@ -47,3 +47,16 @@ OUT.parent.mkdir(parents=True, exist_ok=True)
 font.flavor = "woff2"
 font.save(OUT)
 print(f"{OUT.relative_to(ROOT)}: {OUT.stat().st_size // 1024} KB, {len(hangul)} Hangul syllables: {''.join(hangul)}")
+
+# The share image (app/opengraph-image.tsx) is drawn by Satori, which needs plain TTF at fixed weights
+# (no WOFF2, no variable fonts). Pin the weight axis and subset the same characters.
+from fontTools.varLib import instancer
+
+for weight in (600, 900):
+    static = instancer.instantiateVariableFont(TTFont(CACHE), {"wght": weight})
+    sub = subset.Subsetter(subset.Options())
+    sub.populate(unicodes=[ord(c) for c in chars])
+    sub.subset(static)
+    og = OUT.parent / f"og-NotoSerifKR-{weight}.ttf"
+    static.save(og)
+    print(f"{og.relative_to(ROOT)}: {og.stat().st_size // 1024} KB")
