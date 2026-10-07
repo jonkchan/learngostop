@@ -29,10 +29,10 @@ export function PlayDemoRow({ play, className, children }: { play: string; class
         className={`${className} group relative cursor-pointer transition-colors hover:bg-gold-soft focus-visible:outline-[1.5pt] focus-visible:outline-gold print:bg-transparent`}
       >
         {children}
-        {/* small "watch" hint, screen only, takes no layout space */}
+        {/* small "watch" hint in the left margin, screen only, so it never covers the text */}
         <span
           aria-hidden="true"
-          className="absolute top-[1.5pt] right-[2pt] grid size-[9pt] place-items-center rounded-full bg-hred text-white opacity-60 transition-opacity group-hover:opacity-100 print:hidden"
+          className="absolute top-[2pt] -left-[11pt] grid size-[9pt] place-items-center rounded-full bg-hred text-white opacity-70 transition-opacity group-hover:opacity-100 print:hidden"
         >
           <svg viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
             <path d="M2 1l7 4-7 4z" />
@@ -72,11 +72,11 @@ const pct = (v: number, of: number) => `${(v / of) * 100}%`;
 
 function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
   const [frame, setFrame] = useState(0);
-  const [playing, setPlaying] = useState(true);
+  const [autoplay, setAutoplay] = useState(readAutoplay);
   const last = demo.frames.length - 1;
 
   // auto-advance until the last frame
-  const running = playing && frame < last;
+  const running = autoplay && frame < last;
   useEffect(() => {
     if (!running) return;
     const t = setTimeout(() => setFrame((f) => f + 1), 1900);
@@ -86,13 +86,8 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") {
-        setPlaying(false);
-        setFrame((f) => Math.min(last, f + 1));
-      } else if (e.key === "ArrowLeft") {
-        setPlaying(false);
-        setFrame((f) => Math.max(0, f - 1));
-      }
+      else if (e.key === "ArrowRight") setFrame((f) => Math.min(last, f + 1));
+      else if (e.key === "ArrowLeft") setFrame((f) => Math.max(0, f - 1));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -127,7 +122,16 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
     >
       <div className="relative w-full max-w-[680px]" onClick={(e) => e.stopPropagation()}>
         <div className="max-h-[calc(100dvh-32px)] overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)]">
-          <div className="mb-[10px] font-serif text-[20px] font-black text-hred">{demo.title}</div>
+          <div className="mb-[10px] flex items-center justify-between gap-[12px] pr-[18px]">
+            <div className="font-serif text-[20px] font-black text-hred">{demo.title}</div>
+            <AutoplaySwitch
+              on={autoplay}
+              onChange={(on) => {
+                setAutoplay(on);
+                writeAutoplay(on);
+              }}
+            />
+          </div>
 
           {/* the felt table */}
           <div
@@ -178,10 +182,7 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
             <div className="flex flex-none items-center gap-[6px]">
               <CtrlButton
                 label="Previous step"
-                onClick={() => {
-                  setPlaying(false);
-                  setFrame((f) => Math.max(0, f - 1));
-                }}
+                onClick={() => setFrame((f) => Math.max(0, f - 1))}
                 icon="M15 6l-6 6 6 6"
               />
               <span className="w-[38px] text-center text-[12px] text-muted tabular-nums">
@@ -189,18 +190,12 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
               </span>
               <CtrlButton
                 label="Next step"
-                onClick={() => {
-                  setPlaying(false);
-                  setFrame((f) => Math.min(last, f + 1));
-                }}
+                onClick={() => setFrame((f) => Math.min(last, f + 1))}
                 icon="M9 6l6 6-6 6"
               />
               <CtrlButton
                 label="Replay"
-                onClick={() => {
-                  setFrame(0);
-                  setPlaying(true);
-                }}
+                onClick={() => setFrame(0)}
                 icon="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"
               />
             </div>
@@ -267,6 +262,49 @@ function CtrlButton({ label, onClick, icon }: { label: string; onClick: () => vo
       <svg viewBox="0 0 24 24" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d={icon} />
       </svg>
+    </button>
+  );
+}
+
+/* ---------- autoplay preference (remembered in this browser) ---------- */
+
+const AUTOPLAY_KEY = "learngostop:demo-autoplay";
+
+function readAutoplay(): boolean {
+  try {
+    return localStorage.getItem(AUTOPLAY_KEY) !== "off";
+  } catch {
+    return true; // storage blocked (private mode etc.): default to on
+  }
+}
+
+function writeAutoplay(on: boolean) {
+  try {
+    localStorage.setItem(AUTOPLAY_KEY, on ? "on" : "off");
+  } catch {
+    // ignore: the switch still works for this visit
+  }
+}
+
+function AutoplaySwitch({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={() => onChange(!on)}
+      className="flex flex-none cursor-pointer items-center gap-[8px] text-[13px] font-semibold text-muted"
+    >
+      Autoplay
+      <span
+        className={`relative h-[22px] w-[38px] rounded-full transition-colors ${on ? "bg-hred" : "bg-[#cfc4b2]"}`}
+      >
+        <span
+          className={`absolute top-[3px] left-[3px] size-[16px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-transform ${
+            on ? "translate-x-[16px]" : ""
+          }`}
+        />
+      </span>
     </button>
   );
 }
