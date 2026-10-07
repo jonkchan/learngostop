@@ -40,16 +40,16 @@ const penalties = [
   { term: "Meong-tta", ko: "멍따", def: "Winner has 7+ animals: everyone pays ×2." },
 ];
 
-type Row = { name: ReactNode; need: ReactNode; pts: string };
+type Row = { name: string; ko?: string; dot?: string; need: ReactNode; pts: string };
 const scoring: { group: string; tint: string; rows: Row[] }[] = [
   {
     group: "Gwang 광",
     tint: "bg-gold-soft",
     rows: [
-      { name: "Sam-gwang", need: <>Any 3 gwang <i>without</i> Rain Man (Dec)</>, pts: "3" },
-      { name: "Bi-sam-gwang", need: <>3 gwang <i>including</i> Rain Man (Dec)</>, pts: "2" },
-      { name: "Sa-gwang", need: "Any 4 gwang", pts: "4" },
-      { name: "O-gwang", need: "All 5 gwang", pts: "15" },
+      { name: "Sam-gwang", ko: "삼광", need: <>Any 3 gwang <i>without</i> Rain Man (Dec)</>, pts: "3" },
+      { name: "Bi-sam-gwang", ko: "비삼광", need: <>3 gwang <i>including</i> Rain Man (Dec)</>, pts: "2" },
+      { name: "Sa-gwang", ko: "사광", need: "Any 4 gwang", pts: "4" },
+      { name: "O-gwang", ko: "오광", need: "All 5 gwang", pts: "15" },
     ],
   },
   {
@@ -57,7 +57,7 @@ const scoring: { group: string; tint: string; rows: Row[] }[] = [
     tint: "bg-tan",
     rows: [
       { name: "Animals", need: "5 animals, +1 pt for each extra", pts: "1+" },
-      { name: <><Dot className="bg-ink" />Godori 고도리</>, need: "All 3 birds (Feb, Apr, Aug)", pts: "5" },
+      { name: "Godori", ko: "고도리", dot: "bg-ink", need: "All 3 birds (Feb, Apr, Aug)", pts: "5" },
     ],
   },
   {
@@ -65,9 +65,9 @@ const scoring: { group: string; tint: string; rows: Row[] }[] = [
     tint: "bg-hred-soft",
     rows: [
       { name: "Ribbons", need: "5 ribbons, +1 pt for each extra", pts: "1+" },
-      { name: <><Dot className="bg-hred" />Hongdan 홍단</>, need: "Red poems: Jan, Feb, Mar", pts: "3" },
-      { name: <><Dot className="bg-hblue" />Cheongdan 청단</>, need: "Blue: Jun, Sep, Oct", pts: "3" },
-      { name: <><Dot className="bg-[#e58a8f]" />Chodan 초단</>, need: "Plain red: Apr, May, Jul", pts: "3" },
+      { name: "Hongdan", ko: "홍단", dot: "bg-hred", need: "Red poems: Jan, Feb, Mar", pts: "3" },
+      { name: "Cheongdan", ko: "청단", dot: "bg-hblue", need: "Blue: Jun, Sep, Oct", pts: "3" },
+      { name: "Chodan", ko: "초단", dot: "bg-[#e58a8f]", need: "Plain red: Apr, May, Jul", pts: "3" },
     ],
   },
   {
@@ -106,11 +106,10 @@ export function RulesPage() {
             How to Play <Ko className="ml-[6pt] text-[16pt] text-hred">게임 방법</Ko>
           </h2>
           <div className="mt-[3pt] text-[9pt] text-muted">
-            2–3 players (2-player is called <b className="font-semibold">Matgo</b> 맞고). First to the target score
-            may call Go or Stop.
+            2–3 players. First to the target score may call Go or Stop.
           </div>
         </div>
-        <div className="flex items-center gap-[6pt] rounded-[5pt] bg-hred px-[8pt] py-[4pt] text-white shadow-[inset_0_0_0_1.5pt_var(--color-gold)]">
+        <div className="flex items-center gap-[6pt] rounded-[5pt] bg-gold px-[8pt] py-[4pt] text-ink shadow-[inset_0_0_0_1.2pt_#c99b2b]">
           <span className="text-[6.8pt] leading-[1.2] font-bold tracking-[0.06em] uppercase">
             Target
             <br />
@@ -121,8 +120,8 @@ export function RulesPage() {
             ["2 players", "7"],
           ].map(([who, pts]) => (
             <span key={who} className="text-center leading-none">
-              <span className="block font-serif text-[16pt] font-black text-gold">{pts}</span>
-              <span className="text-[6.3pt] opacity-90">{who}</span>
+              <span className="block font-serif text-[16pt] font-black text-[#7d0b1a]">{pts}</span>
+              <span className="text-[6.8pt] font-semibold">{who}</span>
             </span>
           ))}
         </div>
@@ -225,10 +224,10 @@ export function RulesPage() {
             include the 3 godori birds score 5 + 1 = <b className="text-ink">6 pts</b>.
           </p>
 
-          <SectionTitle ko="고 / 스톱" className="mt-[4pt]">
+          <SectionTitle ko="고 / 스톱" className="mt-[9pt]">
             Go or Stop?
           </SectionTitle>
-          <div className="mt-[4pt] mb-[5pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
+          <div className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
             <div className={`${goStopBox} bg-ink`}>
               <GoStopLabel en="STOP" ko="스톱" icon={<StopIcon />} />
               The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
@@ -241,7 +240,7 @@ export function RulesPage() {
               Keep playing for a bigger payout. You can call again only after your score goes up.
             </div>
           </div>
-          <div className="mb-[4pt] grid grid-cols-5 gap-[3pt]">
+          <div className="mb-[6pt] grid grid-cols-5 gap-[3pt]">
             {goLadder.map(([label, effect]) => (
               <div key={label} className="rounded-[3pt] border-[0.75pt] border-rule bg-card py-[2pt] text-center">
                 <b className="block text-[6.8pt] font-semibold text-muted">{label}</b>
@@ -269,15 +268,14 @@ export function RulesPage() {
               </dd>
             </dl>
           </div>
-          <h3 className="mt-[6pt] mb-[2pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
+          <h3 className="mt-[10pt] mb-[2pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
             Penalties for losers <span className="font-medium text-muted">박 · loser pays ×2</span>
           </h3>
           <Terms items={penalties} />
 
-          <div className="mt-[5pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
-            <b>Example:</b> You hit 3 pts and call <b>Go</b>. Later your cards reach 4, so you choose again and{" "}
-            <b>Stop</b>: 4 + 1 (for the Go) = 5. You also <b>shook</b>, so ×2 = 10. Player B has only 4 junk (
-            <b>pi-bak</b>) and pays 20. Player C pays 10.
+          <div className="mt-[9pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
+            <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}
+            <b>Stop</b>: 4 + 1 (for the Go) = <b>5 pts</b>.
           </div>
         </div>
       </div>
@@ -295,7 +293,11 @@ function ScoreGroup({ group, tint, rows }: { group: string; tint: string; rows: 
       </tr>
       {rows.map((r, i) => (
         <tr key={i}>
-          <td className={`${td} whitespace-nowrap`}>{r.name}</td>
+          <td className={`${td} whitespace-nowrap`}>
+            {r.dot && <Dot className={r.dot} />}
+            {r.name}
+            {r.ko && <Ko className="ml-[3pt] leading-none text-hred">{r.ko}</Ko>}
+          </td>
           <td className={td}>{r.need}</td>
           <td className={`${td} text-right font-bold whitespace-nowrap`}>{r.pts}</td>
         </tr>

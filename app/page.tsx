@@ -1,5 +1,6 @@
 import { CardsPage } from "@/components/CardsPage";
-import { PrintButton } from "@/components/PrintButton";
+import { FitToScreen } from "@/components/FitToScreen";
+import { FloatingActions } from "@/components/FloatingActions";
 import { RulesPage } from "@/components/RulesPage";
 import { siteDescription, siteName, siteTitle, siteUrl } from "@/lib/site";
 
@@ -31,7 +32,8 @@ export default function Home() {
       />
       <CardsPage />
       <RulesPage />
-      <PrintButton />
+      <FloatingActions />
+      <FitToScreen />
     </main>
   );
 }

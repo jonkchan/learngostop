@@ -33,9 +33,22 @@ body {
 }
 
 /* Shrink the letter-size sheets to fit narrow screens */
+/* --sheet-zoom is set by <FitToScreen> (CSS can't divide 100vw by a length) */
 @media screen and (max-width: 860px) {
+  main > section {
+    zoom: var(--sheet-zoom, 1);
+  }
+}
+
+/* On screen only: a hwatu card-back red "table" behind the sheets */
+@media screen {
   body {
-    zoom: calc(100vw / 8.9in);
+    background-color: #8a3b3e;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.12), transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgb(0 0 0 / 0.2), transparent 65%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg transform='translate(18 18) scale(1.200)'%3E%3Cg fill='%23b04a4e' fill-opacity='.55'%3E%3Ccircle cy='-5' r='4.2' transform='rotate(0)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(72)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(144)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(216)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='3' fill='%23f2b822' fill-opacity='.3'/%3E%3C/g%3E%3Cg transform='translate(54 54) scale(1.200)'%3E%3Cg fill='%23b04a4e' fill-opacity='.55'%3E%3Ccircle cy='-5' r='4.2' transform='rotate(0)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(72)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(144)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(216)'/%3E%3Ccircle cy='-5' r='4.2' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='3' fill='%23f2b822' fill-opacity='.3'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='.06'%3E%3Ccircle cx='54' cy='18' r='1.6'/%3E%3Ccircle cx='18' cy='54' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
 }
 
@@ -47,6 +60,8 @@ body {
 @media print {
   body {
     background: none;
+  }
+  main > section {
     zoom: 1;
   }
 }

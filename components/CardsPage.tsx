@@ -203,7 +203,7 @@ function SetLegend() {
 function GwangFan() {
   const gwang = months.flatMap((m) => m.cards.filter((c) => c.type === "gwang"));
   return (
-    <div className="absolute right-[64pt] bottom-[6pt] h-[40pt] w-[110pt]" aria-hidden="true">
+    <div className="absolute right-[64pt] bottom-[14.25pt] h-[40pt] w-[110pt]" aria-hidden="true">
       {gwang.map((card, i) => {
         const angle = (i - 2) * 13;
         return (
