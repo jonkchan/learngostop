@@ -2,11 +2,13 @@ import Image from "next/image";
 import { describeCard, type Month } from "@/lib/deck";
 import { HighlightCard } from "./Highlight";
 import { HwatuCard } from "./HwatuCard";
+import { MonthZoom } from "./MonthZoom";
 import { Ko } from "./Sheet";
 
 export function MonthBlock({ month }: { month: Month }) {
   return (
-    <div
+    <MonthZoom
+      num={month.num}
       className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[8pt] pt-[6pt] pb-[5pt]"
       style={{
         // colored cap + soft wash in the month's flower color; an inset shadow keeps the layout height unchanged
@@ -49,6 +51,6 @@ export function MonthBlock({ month }: { month: Month }) {
           </HighlightCard>
         ))}
       </div>
-    </div>
+    </MonthZoom>
   );
 }
