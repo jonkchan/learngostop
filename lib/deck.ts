@@ -61,7 +61,7 @@ const baseMonths: Month[] = [
     cards: [{ type: "animal", caption: "Sake Cup", tag: "×2?" }, { type: "ribbon", caption: "Blue", ribbon: "cheong" }, junk, junk],
   },
   {
-    num: 10, name: "October · Maple", ko: "단풍", note: "Maple leaves & deer", color: "#e2620e",
+    num: 10, name: "October · Maple", ko: "단풍", note: "Maple leaves & deer", color: "#c4520a",
     cards: [{ type: "animal", caption: "Deer" }, { type: "ribbon", caption: "Blue", ribbon: "cheong" }, junk, junk],
   },
   {

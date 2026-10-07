@@ -30,20 +30,15 @@ export function Zoomable({
 
   return (
     <>
+      {/* clickable with a mouse; keyboard and screen readers get a hidden button, so the content stays readable */}
       <div
-        role="button"
-        tabIndex={0}
-        aria-label={`Enlarge ${label}`}
         onClick={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setOpen(true);
-          }
-        }}
-        className={`${className} cursor-zoom-in transition-shadow hover:ring-[1.5pt] hover:ring-gold focus-visible:outline-[1.5pt] focus-visible:outline-gold print:ring-0`}
+        className={`${className} cursor-zoom-in transition-shadow hover:ring-[1.5pt] hover:ring-gold has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:ring-0`}
       >
         {children}
+        <button type="button" className="open-btn sr-only">
+          Enlarge {label}
+        </button>
       </div>
       {open && (
         <ViewportOverlay>

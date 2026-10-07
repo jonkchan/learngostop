@@ -48,25 +48,19 @@ export function MonthZoom({
 
   return (
     <>
+      {/* clickable with a mouse; keyboard and screen readers get a hidden button, so the cards stay readable */}
       <div
-        role="button"
-        tabIndex={0}
-        aria-label={`Enlarge ${months[num - 1].name}`}
         onClick={() => {
           setDir(0);
           setOpen(num);
         }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setDir(0);
-            setOpen(num);
-          }
-        }}
-        className={`${className} cursor-zoom-in transition-shadow duration-200 [box-shadow:var(--cap)] hover:[box-shadow:var(--cap),0_0_0_1.5pt_var(--color-gold),0_6pt_16pt_rgba(0,0,0,0.18)] focus-visible:outline-[1.5pt] focus-visible:outline-gold print:[box-shadow:var(--cap)]`}
+        className={`${className} cursor-zoom-in transition-shadow duration-200 [box-shadow:var(--cap)] hover:[box-shadow:var(--cap),0_0_0_1.5pt_var(--color-gold),0_6pt_16pt_rgba(0,0,0,0.18)] has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:[box-shadow:var(--cap)]`}
         style={style}
       >
         {children}
+        <button type="button" className="open-btn sr-only">
+          Enlarge {months[num - 1].name} cards
+        </button>
       </div>
       {open !== null && (
         <ViewportOverlay>

@@ -11,45 +11,54 @@ import { ViewportOverlay } from "./ViewportOverlay";
 export function PlayDemoRow({
   play,
   className,
-  children,
+  termClassName,
+  term,
+  def,
 }: {
   play: string;
   className: string;
-  children: ReactNode;
+  termClassName: string;
+  term: ReactNode;
+  def: ReactNode;
 }) {
   const demo = demos[play];
   const [open, setOpen] = useState(false);
-  if (!demo) return <div className={className}>{children}</div>;
+  if (!demo)
+    return (
+      <div className={className}>
+        <dt className={termClassName}>{term}</dt>
+        <dd>{def}</dd>
+      </div>
+    );
   return (
     <>
+      {/* the whole row is clickable with a mouse; keyboard and screen readers use the ▶ button,
+          so the term and definition stay readable as a list */}
       <div
-        role="button"
-        tabIndex={0}
-        aria-label={`Show how ${play} works`}
         title="Watch how it works"
         onClick={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setOpen(true);
-          }
-        }}
-        className={`${className} group relative cursor-pointer transition-colors hover:bg-gold-soft focus-visible:outline-[1.5pt] focus-visible:outline-gold print:bg-transparent`}
+        className={`${className} group relative cursor-pointer transition-colors hover:bg-gold-soft has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent`}
       >
-        {children}
-        {/* small "watch" hint in the left margin, screen only, so it never covers the text */}
-        <span
-          aria-hidden="true"
-          className="absolute top-[2pt] -left-[11pt] grid size-[9pt] place-items-center rounded-full bg-hred text-white opacity-70 transition-opacity group-hover:opacity-100 print:hidden"
-        >
-          <svg
-            viewBox="0 0 10 10"
-            className="ml-[0.5pt] size-[4.5pt]"
-            fill="currentColor"
+        <dt className={termClassName}>
+          {/* small "watch" hint in the left margin, screen only, so it never covers the text.
+              It lives in the <dt> (a row <div> in a <dl> may only hold dt/dd); it's positioned against the row. */}
+          <button
+            type="button"
+            aria-label={`Show how ${play} works`}
+            className="open-btn absolute top-[2pt] -left-[11pt] grid size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
           >
-            <path d="M2 1l7 4-7 4z" />
-          </svg>
-        </span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 10 10"
+              className="ml-[0.5pt] size-[4.5pt]"
+              fill="currentColor"
+            >
+              <path d="M2 1l7 4-7 4z" />
+            </svg>
+          </button>
+          {term}
+        </dt>
+        <dd>{def}</dd>
       </div>
       {open && (
         <ViewportOverlay>

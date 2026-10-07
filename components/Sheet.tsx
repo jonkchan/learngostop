@@ -29,7 +29,11 @@ export function SectionTitle({ ko, className = "", children }: { ko: string; cla
 }
 
 export function Ko({ className = "", children }: { className?: string; children: ReactNode }) {
-  return <span className={`font-serif ${className}`}>{children}</span>;
+  return (
+    <span lang="ko" className={`font-serif ${className}`}>
+      {children}
+    </span>
+  );
 }
 
 /** A term → definition grid (special plays, penalties). */
@@ -46,21 +50,18 @@ export function Terms({
   return (
     <dl className="grid grid-cols-[auto_1fr]">
       {items.map((t) => {
-        const cells = (
+        const termClass = "font-bold whitespace-nowrap";
+        const term = (
           <>
-            <dt className="font-bold whitespace-nowrap">
-              {t.term} <Ko className="ml-[2pt] font-bold text-hred">{t.ko}</Ko>
-            </dt>
-            <dd>{t.def}</dd>
+            {t.term} <Ko className="ml-[2pt] font-bold text-hred">{t.ko}</Ko>
           </>
         );
         return demos ? (
-          <PlayDemoRow key={t.term} play={t.term} className={rowClass}>
-            {cells}
-          </PlayDemoRow>
+          <PlayDemoRow key={t.term} play={t.term} className={rowClass} termClassName={termClass} term={term} def={t.def} />
         ) : (
           <div key={t.term} className={rowClass}>
-            {cells}
+            <dt className={termClass}>{term}</dt>
+            <dd>{t.def}</dd>
           </div>
         );
       })}

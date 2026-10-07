@@ -13,29 +13,22 @@ export function GoStopDemoTrigger({ className, children }: { className: string; 
   const [open, setOpen] = useState(false);
   return (
     <>
+      {/* clickable with a mouse; keyboard and screen readers use the ▶ button, so the boxes stay readable */}
       <div
-        role="button"
-        tabIndex={0}
-        aria-label="Show every way Go or Stop can play out"
         title="See every Go / Stop scenario"
         onClick={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setOpen(true);
-          }
-        }}
-        className={`${className} group relative cursor-pointer rounded-[5pt] transition-shadow hover:shadow-[0_0_0_1.5pt_var(--color-gold),0_6pt_14pt_rgba(0,0,0,0.18)] focus-visible:outline-[1.5pt] focus-visible:outline-gold print:shadow-none`}
+        className={`${className} group relative cursor-pointer rounded-[5pt] transition-shadow hover:shadow-[0_0_0_1.5pt_var(--color-gold),0_6pt_14pt_rgba(0,0,0,0.18)] has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:shadow-none`}
       >
         {children}
-        <span
-          aria-hidden="true"
-          className="absolute top-[4pt] -left-[11pt] grid size-[9pt] place-items-center rounded-full bg-hred text-white opacity-70 transition-opacity group-hover:opacity-100 print:hidden"
+        <button
+          type="button"
+          aria-label="Show every way Go or Stop can play out"
+          className="open-btn absolute top-[4pt] -left-[11pt] grid size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
         >
-          <svg viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
+          <svg aria-hidden="true" viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
             <path d="M2 1l7 4-7 4z" />
           </svg>
-        </span>
+        </button>
       </div>
       {open && (
         <ViewportOverlay>
