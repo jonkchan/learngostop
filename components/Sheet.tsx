@@ -16,7 +16,18 @@ export function Sheet({ folio, className = "", children }: { folio: string; clas
   );
 }
 
-export function SectionTitle({ ko, className = "", children }: { ko: string; className?: string; children: ReactNode }) {
+export function SectionTitle({
+  ko,
+  className = "",
+  aside,
+  children,
+}: {
+  ko: string;
+  className?: string;
+  /** Something small at the right end of the title row (e.g. a demo button). */
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <h2
       className={`mb-[5pt] flex items-baseline gap-[5pt] border-b-[1pt] border-rule pb-[2pt] font-serif text-[12.5pt] leading-[1.15] font-black text-hred ${className}`}
@@ -24,6 +35,7 @@ export function SectionTitle({ ko, className = "", children }: { ko: string; cla
       <Blossom className="size-[10pt] flex-none self-center" />
       {children}
       <span className="text-[9pt] font-medium text-muted">{ko}</span>
+      {aside && <span className="ml-auto self-center">{aside}</span>}
     </h2>
   );
 }

@@ -3,6 +3,7 @@ import { FitToScreen } from "@/components/FitToScreen";
 import { FloatingActions } from "@/components/FloatingActions";
 import { HighlightProvider } from "@/components/Highlight";
 import { RulesPage } from "@/components/RulesPage";
+import { WelcomeTour } from "@/components/WelcomeTour";
 import { siteDescription, siteName, siteTitle, siteUrl } from "@/lib/site";
 
 // Structured data so search engines understand the page is a guide to the game Go-Stop.
@@ -38,6 +39,7 @@ export default function Home() {
       </HighlightProvider>
       <FloatingActions />
       <FitToScreen />
+      <WelcomeTour />
     </main>
   );
 }

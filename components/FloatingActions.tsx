@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { siteTitle, siteUrl } from "@/lib/site";
+import { TOUR_EVENT } from "./WelcomeTour";
 
-/** The floating Share and Print buttons in the bottom-right corner (screen only). */
+/** The floating Tour, Share and Print buttons in the bottom-right corner (screen only). */
 export function FloatingActions() {
   // On phones the buttons tuck away while scrolling down and return on scroll-up or at the top.
   const [hidden, setHidden] = useState(false);
@@ -35,7 +36,7 @@ export function FloatingActions() {
 
   return (
     <div
-      className={`fixed right-[18px] bottom-[18px] flex items-center gap-[10px] transition-[translate,opacity] duration-300 max-sm:right-[16px] max-sm:bottom-[16px] max-sm:flex-col-reverse max-sm:gap-[12px] print:hidden ${
+      className={`fixed right-[18px] bottom-[18px] flex items-center gap-[10px] transition-[translate,opacity] duration-300 max-sm:right-[16px] max-sm:bottom-[16px] max-sm:flex-col max-sm:gap-[10px] print:hidden ${
         zoomed
           ? "pointer-events-none translate-y-[120%] opacity-0"
           : hidden
@@ -43,6 +44,13 @@ export function FloatingActions() {
             : ""
       }`}
     >
+      <ActionButton
+        label="Tour"
+        tip="Take the tour"
+        icon={<HelpIcon />}
+        onClick={() => window.dispatchEvent(new Event(TOUR_EVENT))}
+        small
+      />
       <ShareButton />
       <ActionButton label="Print" icon={<PrinterIcon />} onClick={() => window.print()} primary />
     </div>
@@ -73,7 +81,7 @@ function ShareButton() {
 
   return (
     <div className="relative">
-      <ActionButton label="Share" icon={<ShareIcon />} onClick={share} />
+      <ActionButton label="Share" tip={copied ? undefined : "Share this guide"} icon={<ShareIcon />} onClick={share} small />
       <span
         role="status"
         className={`pointer-events-none absolute bottom-full left-1/2 mb-[8px] -translate-x-1/2 rounded-full bg-ink px-[10px] py-[4px] text-[12px] font-semibold whitespace-nowrap text-white transition-opacity duration-200 max-sm:right-full max-sm:bottom-1/2 max-sm:left-auto max-sm:mr-[10px] max-sm:mb-0 max-sm:translate-x-0 max-sm:translate-y-1/2 ${
@@ -91,23 +99,40 @@ function ActionButton({
   icon,
   onClick,
   primary = false,
+  small = false,
+  tip,
 }: {
   label: string;
+  /** Hover / focus tooltip, for icon-only buttons. */
+  tip?: string;
   icon: ReactNode;
   onClick: () => void;
   primary?: boolean;
+  /** A compact icon-only circle (label as tooltip), for secondary actions. */
+  small?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`flex cursor-pointer items-center gap-[8px] rounded-full py-[10px] pr-[18px] pl-[14px] text-[14px] font-bold text-ink shadow-[0_4px_14px_rgba(0,0,0,0.35)] max-sm:p-[16px] ${
-        primary ? "bg-gold" : "bg-paper"
-      }`}
+      className={`group relative flex cursor-pointer items-center gap-[8px] rounded-full text-[14px] font-bold text-ink shadow-[0_4px_14px_rgba(0,0,0,0.35)] ${
+        small
+          ? "p-[10px] max-sm:p-[11px] max-sm:[&_svg]:size-[20px]"
+          : "py-[10px] pr-[18px] pl-[14px] max-sm:p-[16px]"
+      } ${primary ? "bg-gold" : "bg-paper"}`}
     >
       {icon}
-      <span className="max-sm:hidden">{label}</span>
+      {!small && <span className="max-sm:hidden">{label}</span>}
+      {tip && (
+        // above the button; to its left on phones, where the buttons stack in a column
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-full left-1/2 mb-[8px] -translate-x-1/2 rounded-full bg-ink px-[10px] py-[4px] text-[12px] font-semibold whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 max-sm:right-full max-sm:bottom-1/2 max-sm:left-auto max-sm:mr-[10px] max-sm:mb-0 max-sm:translate-x-0 max-sm:translate-y-1/2"
+        >
+          {tip}
+        </span>
+      )}
     </button>
   );
 }
@@ -129,6 +154,17 @@ function PrinterIcon() {
       <path d="M6 9V2h12v7" />
       <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
       <rect x="6" y="14" width="12" height="8" rx="1" />
+    </svg>
+  );
+}
+
+/** A question mark in a circle: "how does this work?" */
+function HelpIcon() {
+  return (
+    <svg {...iconProps}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+      <path d="M12 17h.01" />
     </svg>
   );
 }

@@ -36,6 +36,40 @@ const giveFrames = (base: Record<string, Place>, firstMine: number, caption: str
 ];
 
 export const demos: Record<string, Demo> = {
+  // Not a special play: three ordinary turns, for the "Your Turn" steps.
+  "Your Turn": (() => {
+    // turn 1: play January onto its match; the flip (August) has no match and stays
+    const t1 = { "01-1": hand(0), "06-1": hand(1), "04-1": hand(2), "12-3": hand(3), "01-3": table(0), "04-3": table(1), "04-2": table(2), "08-3": pile() };
+    const after1 = { "06-1": hand(1), "04-1": hand(2), "12-3": hand(3), "04-3": table(1), "04-2": table(2), "08-3": table(3), "01-1": mine(0), "01-3": mine(1) };
+    // turn 2: June has no match and stays; the flip (August) matches the August on the table
+    const played2 = { ...after1, "06-1": table(0), "08-4": pile() };
+    const after2 = { ...after1, "06-1": table(0), "08-3": mine(2), "08-4": mine(3) };
+    // turn 3: two Aprils on the table; you choose the ribbon over the junk
+    const played3 = { ...after2, "04-1": table(2, 1), "03-3": pile() };
+    const after3 = { ...after2, "04-1": mine(4), "04-2": mine(5), "03-3": table(3) };
+    const frames: Frame[] = [
+      { caption: "Your turn. Look for a card in your hand that's the same month as a card on the table.", at: t1 },
+      { caption: "You have January, and so does the table. Play it on top of its match.", at: { ...t1, "01-1": table(0, 1) } },
+      { caption: "Then flip the top card of the draw pile: August.", at: { ...t1, "01-1": table(0, 1), "08-3": pile({ faceDown: false, lift: true }) } },
+      { caption: "No August on the table, so the flipped card just stays there.", at: { ...t1, "01-1": table(0, 1), "08-3": table(3) } },
+      { caption: "Claim your pair: both January cards go in front of you.", at: after1 },
+      { caption: "Next turn. Nothing in your hand matches the table, but you still have to play a card.", at: { ...after1, "06-1": hand(1, { raised: true }) } },
+      { caption: "Play June anyway. With no match, it just stays on the table.", at: { ...after1, "06-1": table(0) } },
+      { caption: "Flip the pile: August!", at: { ...played2, "08-4": pile({ faceDown: false, lift: true }) } },
+      { caption: "It matches the August card left on the table last turn.", at: { ...played2, "08-4": table(3, 1) } },
+      { caption: "Claim the August pair. Your June stays behind for anyone to match later.", at: after2 },
+      { caption: "Next turn. You play April, but there are two Aprils on the table.", at: { ...after2, "04-1": hand(2, { raised: true }), "04-3": table(1, 0, { lift: true }), "04-2": table(2, 0, { lift: true }) } },
+      { caption: "You choose which one to take. Pick the ribbon: it's worth more than the junk card.", at: { ...after2, "04-1": table(2, 1) } },
+      { caption: "Flip the pile: March. No match, so it stays on the table.", at: { ...played3, "03-3": table(3) } },
+      { caption: "Claim your April and the ribbon. The other April stays on the table.", at: after3 },
+    ];
+    // the rest of the draw pile: one face-down card that never moves, so the pile doesn't vanish after a flip
+    return {
+      title: "Your turn 차례 · three example turns",
+      frames: frames.map((f) => ({ ...f, at: { "12-4": pile(), ...f.at } })),
+    };
+  })(),
+
   Ppeok: (() => {
     const start = { "03-1": hand(0), "12-2": hand(1), "03-3": table(0), "09-3": table(1), "03-4": pile() };
     const stuck = { ...start, "03-1": table(0, 1, { lift: true }), "03-3": table(0, 0, { lift: true }), "03-4": table(0, 2, { lift: true }) };

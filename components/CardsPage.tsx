@@ -123,7 +123,7 @@ export function CardsPage() {
 
 function SetLegend() {
   return (
-    <div className="relative mt-[7pt] rounded-[4pt] border-[0.75pt] border-rule bg-[#f4eddf] px-[6pt] pt-[8pt] pb-[4pt]">
+    <div data-tour="legend" className="relative mt-[7pt] rounded-[4pt] border-[0.75pt] border-rule bg-[#f4eddf] px-[6pt] pt-[8pt] pb-[4pt]">
       <span className="absolute -top-[5pt] left-[7pt] rounded-[2pt] bg-hred px-[4pt] text-[6pt] leading-[10pt] font-bold tracking-[0.08em] text-white uppercase shadow-[inset_0_0_0_0.75pt_var(--color-gold)]">
         Legend
       </span>

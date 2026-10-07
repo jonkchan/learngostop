@@ -25,7 +25,7 @@ export function PlayerArea() {
     <Zoomable
       label="Example: your side of the table"
       large={<LargeExample />}
-      className="mb-[5pt] rounded-[5pt] bg-[#f1e6d2] px-[6pt] pt-[4pt] pb-[5pt] text-ink shadow-[inset_0_0_0_1.2pt_var(--color-gold)]"
+      className="mb-[5pt] rounded-[5pt] bg-[#f1e6d2] px-[6pt] pt-[4pt] pb-[5pt] text-ink select-none shadow-[inset_0_0_0_1.2pt_var(--color-gold)]"
     >
       <div className="mb-[3pt] flex items-center justify-between text-[7pt]">
         <span className="font-semibold">Example: your side of the table</span>

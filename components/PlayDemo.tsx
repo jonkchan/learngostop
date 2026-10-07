@@ -45,7 +45,7 @@ export function PlayDemoRow({
           <button
             type="button"
             aria-label={`Show how ${play} works`}
-            className="open-btn absolute top-[2pt] -left-[11pt] grid size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
+            className="open-btn absolute top-[2pt] -left-[11pt] grid select-none size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
           >
             <svg
               aria-hidden="true"
@@ -60,6 +60,44 @@ export function PlayDemoRow({
         </dt>
         <dd>{def}</dd>
       </div>
+      {open && (
+        <ViewportOverlay>
+          <DemoDialog demo={demo} onClose={() => setOpen(false)} />
+        </ViewportOverlay>
+      )}
+    </>
+  );
+}
+
+/** A small labeled "▶ Watch" chip that opens a demo (e.g. in the Your Turn heading). Screen only. */
+export function DemoChip({
+  play,
+  label,
+  ariaLabel,
+  tour,
+}: {
+  play: string;
+  label: string;
+  /** Fuller name for screen readers; should start with the visible label. */
+  ariaLabel?: string;
+  tour?: string;
+}) {
+  const demo = demos[play];
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        data-tour={tour}
+        aria-label={ariaLabel}
+        onClick={() => setOpen(true)}
+        className="flex cursor-pointer items-center gap-[3pt] rounded-full bg-hred select-none py-[1.5pt] pr-[6pt] pl-[5pt] font-sans text-[7pt] font-bold tracking-[0.02em] text-white opacity-85 transition-opacity hover:opacity-100 focus-visible:outline-[1.5pt] focus-visible:outline-offset-[1pt] focus-visible:outline-gold print:hidden"
+      >
+        <svg aria-hidden="true" viewBox="0 0 10 10" className="size-[5pt]" fill="currentColor">
+          <path d="M2 1l7 4-7 4z" />
+        </svg>
+        {label}
+      </button>
       {open && (
         <ViewportOverlay>
           <DemoDialog demo={demo} onClose={() => setOpen(false)} />

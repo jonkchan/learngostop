@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cardIds } from "@/lib/deck";
 import { GoStopDemoTrigger } from "./GoStopDemo";
+import { DemoChip } from "./PlayDemo";
 import { HighlightRow, HighlightRowButton } from "./Highlight";
 import { PlayerArea } from "./PlayerArea";
 import { Ko, SectionTitle, Sheet, Terms } from "./Sheet";
@@ -121,21 +122,29 @@ export function RulesPage() {
             2–3 players. First to the target score may call Go or Stop.
           </div>
         </div>
-        <div className="flex items-center gap-[6pt] rounded-[5pt] bg-gold px-[8pt] py-[4pt] text-ink shadow-[inset_0_0_0_1.2pt_#c99b2b]">
-          <span className="text-[6.8pt] leading-[1.2] font-bold tracking-[0.06em] uppercase">
-            Target
-            <br />
-            score
-          </span>
-          {[
-            ["3 players", "3"],
-            ["2 players", "7"],
-          ].map(([who, pts]) => (
-            <span key={who} className="self-stretch border-l-[0.75pt] border-[#c99b2b] pl-[6pt] text-center leading-none">
-              <span className="block pt-[1pt] font-serif text-[16pt] font-black text-[#7d0b1a]">{pts}</span>
-              <span className="text-[6.8pt] font-semibold">{who}</span>
-            </span>
-          ))}
+        {/* a little scorecard: red title strip over two cream cells, in a red frame */}
+        <div className="overflow-hidden rounded-[5pt] border-[1pt] border-hred bg-card text-ink select-none shadow-[0_1.5pt_4pt_rgba(0,0,0,0.12)]">
+          <div className="flex items-baseline justify-center gap-[4pt] bg-hred px-[8pt] pt-[2pt] pb-[1.5pt] text-white">
+            <span className="text-[6.6pt] font-bold tracking-[0.12em] uppercase">Target score</span>
+            <Ko className="text-[6.6pt] font-medium opacity-85">목표 점수</Ko>
+          </div>
+          <div className="grid grid-cols-2">
+            {[
+              ["3 players", "3"],
+              ["2 players", "7"],
+            ].map(([who, pts], i) => (
+              <div
+                key={who}
+                className={`px-[9pt] pt-[2pt] pb-[3pt] text-center leading-none ${i ? "border-l-[0.75pt] border-rule" : ""}`}
+              >
+                <div className="font-serif text-[17pt] font-black text-[#7d0b1a]">
+                  {pts}
+                  <span className="ml-[1.5pt] font-sans text-[6.5pt] font-bold text-[#7d0b1a]/80">pts</span>
+                </div>
+                <div className="mt-[1pt] text-[6.6pt] font-semibold whitespace-nowrap text-muted">{who}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -203,7 +212,9 @@ export function RulesPage() {
             counter-clockwise. The last hand&rsquo;s winner deals next.
           </p>
 
-          <SectionTitle ko="차례">Your Turn</SectionTitle>
+          <SectionTitle ko="차례" aside={<DemoChip play="Your Turn" label="Watch" ariaLabel="Watch three example turns" tour="turn" />}>
+            Your Turn
+          </SectionTitle>
           <ol className="mb-[4pt]">
             {steps.map((step, i) => (
               <li key={i} className="relative mb-[3.5pt] pl-[17pt]">
@@ -217,13 +228,15 @@ export function RulesPage() {
           <PlayerArea />
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
-          <Terms items={specialPlays} demos />
+          <div data-tour="plays">
+            <Terms items={specialPlays} demos />
+          </div>
         </div>
 
         {/* RIGHT */}
         <div>
           <SectionTitle ko="점수">How to Score</SectionTitle>
-          <table className="w-full border-collapse text-[8pt]">
+          <table data-tour="scoring" className="w-full border-collapse text-[8pt]">
             <thead>
               <tr>
                 <th className={th}>Combination</th>
@@ -245,7 +258,7 @@ export function RulesPage() {
           <SectionTitle ko="고 / 스톱" className="mt-[9pt]">
             Go or Stop?
           </SectionTitle>
-          <GoStopDemoTrigger className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
+          <GoStopDemoTrigger className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch select-none">
             <div className={`${goStopBox} bg-hred`}>
               <GoStopLabel en="GO" ko="고" icon={<GoIcon />} />
               Keep playing for a bigger payout. You can call again only after your score goes up.
@@ -258,7 +271,7 @@ export function RulesPage() {
               The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
             </div>
           </GoStopDemoTrigger>
-          <div className="mb-[6pt] grid grid-cols-5 gap-[3pt]">
+          <div className="mb-[6pt] grid grid-cols-5 gap-[3pt] select-none">
             {goLadder.map(([label, effect]) => (
               <div key={label} className="rounded-[3pt] border-[0.75pt] border-rule bg-card py-[2pt] text-center">
                 <b className="block text-[6.8pt] font-semibold text-muted">{label}</b>
