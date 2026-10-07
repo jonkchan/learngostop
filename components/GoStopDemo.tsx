@@ -40,14 +40,76 @@ export function GoStopDemoTrigger({ className, children }: { className: string; 
   );
 }
 
+/**
+ * A row of the "Watch out" list (Go-bak, Nagari) that opens the Go/Stop demo on that scenario.
+ * Like the Special Plays rows: the whole row is clickable with a mouse, the ▶ button (in the column gutter,
+ * lined up with the Go/Stop boxes' ▶) handles keyboard and screen readers, and it sits inside the <dt>
+ * so the <dl> stays valid. Screen only.
+ */
+export function GoStopRow({
+  scenario,
+  label,
+  termClassName,
+  term,
+  def,
+}: {
+  /** A goStopScenarios key, e.g. "gobak". */
+  scenario: string;
+  label: string;
+  termClassName: string;
+  term: ReactNode;
+  def: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const initial = Math.max(0, goStopScenarios.findIndex((s) => s.key === scenario));
+  return (
+    <>
+      <div
+        title="Watch how it plays out"
+        onClick={() => setOpen(true)}
+        className="group relative col-span-2 -mx-[3pt] grid grid-cols-subgrid rounded-[2pt] px-[3pt] cursor-pointer transition-colors hover:bg-[#f9dcd8] has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent"
+      >
+        <dt className={termClassName}>
+          <button
+            type="button"
+            aria-label={label}
+            className="open-btn absolute top-[1pt] -left-[16.5pt] grid size-[9pt] cursor-pointer select-none place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
+          >
+            <svg aria-hidden="true" viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
+              <path d="M2 1l7 4-7 4z" />
+            </svg>
+          </button>
+          {term}
+        </dt>
+        <dd>{def}</dd>
+      </div>
+      {open && (
+        <ViewportOverlay>
+          <GoStopDialog initial={initial} only onClose={() => setOpen(false)} />
+        </ViewportOverlay>
+      )}
+    </>
+  );
+}
+
 const players: { id: Player; name: string }[] = [
   { id: "you", name: "You" },
   { id: "b", name: "Player B" },
   { id: "c", name: "Player C" },
 ];
 
-function GoStopDialog({ onClose }: { onClose: () => void }) {
-  const [scenario, setScenario] = useState(0);
+function GoStopDialog({
+  onClose,
+  initial = 0,
+  only = false,
+}: {
+  onClose: () => void;
+  /** Scenario to open on. */
+  initial?: number;
+  /** Opened for one scenario (from a Watch out row): autoplay stops at its end instead of moving on. */
+  only?: boolean;
+}) {
+  const [scenario, setScenario] = useState(initial);
   const [frame, setFrame] = useState(0);
   const [autoplay, setAutoplay] = useState(readAutoplay);
   const sc = goStopScenarios[scenario];
@@ -55,7 +117,7 @@ function GoStopDialog({ onClose }: { onClose: () => void }) {
   const f = sc.frames[frame];
 
   // auto-advance; at the end of a scenario, pause a beat and move on to the next one
-  const running = autoplay && (frame < last || scenario < goStopScenarios.length - 1);
+  const running = autoplay && (frame < last || (!only && scenario < goStopScenarios.length - 1));
   useEffect(() => {
     if (!running) return;
     const t = setTimeout(

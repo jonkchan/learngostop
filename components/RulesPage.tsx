@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cardIds } from "@/lib/deck";
-import { GoStopDemoTrigger } from "./GoStopDemo";
+import { GoStopDemoTrigger, GoStopRow } from "./GoStopDemo";
 import { DemoChip } from "./PlayDemo";
 import { HighlightRow, HighlightRowButton } from "./Highlight";
 import { PlayerArea } from "./PlayerArea";
@@ -285,18 +285,37 @@ export function RulesPage() {
               <span className="[text-box:trim-both_cap_alphabetic]">Watch out: two ways a hand goes wrong</span>
             </div>
             <dl className="grid grid-cols-[auto_1fr] gap-x-[6pt] gap-y-[2.5pt]">
-              <dt className="font-bold whitespace-nowrap text-hred">
-                Go-bak <Ko>고박</Ko>
-              </dt>
-              <dd>
-                You called Go, then someone else wins: <b className="text-hred">you pay their winnings for everyone.</b>
-              </dd>
-              <dt className="font-bold whitespace-nowrap text-hred">
-                Nagari <Ko>나가리</Ko>
-              </dt>
-              <dd>
-                Cards run out with no Stop: a draw. Nobody is paid, not even a Go-caller; next hand pays <b>×2</b>.
-              </dd>
+              <GoStopRow
+                scenario="gobak"
+                label="Watch how Go-bak plays out"
+                termClassName="font-bold whitespace-nowrap text-hred"
+                term={
+                  <>
+                    Go-bak <Ko>고박</Ko>
+                  </>
+                }
+                def={
+                  <>
+                    You called Go, then someone else wins:{" "}
+                    <b className="text-hred">you pay their winnings for everyone.</b>
+                  </>
+                }
+              />
+              <GoStopRow
+                scenario="nagari"
+                label="Watch how Nagari plays out"
+                termClassName="font-bold whitespace-nowrap text-hred"
+                term={
+                  <>
+                    Nagari <Ko>나가리</Ko>
+                  </>
+                }
+                def={
+                  <>
+                    Cards run out with no Stop: a draw. Nobody is paid, not even a Go-caller; next hand pays <b>×2</b>.
+                  </>
+                }
+              />
             </dl>
           </div>
           <h3 className="mt-[10pt] mb-[2pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
