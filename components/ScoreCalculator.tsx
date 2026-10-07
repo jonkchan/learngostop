@@ -64,11 +64,11 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
         aria-modal="true"
         aria-label="Score calculator"
         onClick={onClose}
-        className="absolute inset-0 grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
+        className="absolute inset-0 grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] max-sm:place-items-end max-sm:p-0 print:hidden"
       >
         <div className="relative w-full max-w-[560px]" onClick={(e) => e.stopPropagation()}>
-          <div className="max-h-[calc(100dvh-32px)] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] text-ink shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)]">
-            <div className="mb-[12px] flex flex-wrap items-center justify-between gap-[10px] pr-[18px]">
+          <div className="max-h-[calc(100dvh-32px)] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] text-ink shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)] max-sm:max-h-[calc(100dvh-24px)] max-sm:rounded-b-none max-sm:px-[16px] max-sm:shadow-[0_-8px_30px_rgba(0,0,0,0.35),inset_0_3px_0_var(--color-hred)]">
+            <div className="mb-[12px] flex flex-wrap items-center justify-between gap-[10px] pr-[18px] max-sm:pr-[40px]">
               <div className="font-serif text-[20px] font-black text-hred">
                 Score calculator{" "}
                 <span lang="ko" className="text-[15px] font-medium whitespace-nowrap text-muted">
@@ -192,15 +192,16 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
             {/* result */}
             {/* pinned to the bottom while scrolling (on phones the inputs are taller than the screen) */}
             <div
-              className="sticky -bottom-[16px] z-10 -mx-[18px] mt-[14px] bg-paper px-[18px] pt-[2px] pb-[16px] shadow-[0_-10px_14px_-10px_rgba(0,0,0,0.25)] sm:static sm:mx-0 sm:p-0 sm:shadow-none"
+              className="sticky -bottom-[16px] z-10 -mx-[18px] mt-[14px] bg-paper px-[18px] pt-[2px] pb-[16px] max-sm:-mx-[16px] max-sm:px-[16px] max-sm:pb-[12px] shadow-[0_-10px_14px_-10px_rgba(0,0,0,0.25)] sm:static sm:mx-0 sm:p-0 sm:shadow-none"
               aria-live="polite"
             >
               <div className="overflow-hidden rounded-[14px] shadow-[0_4px_14px_rgba(0,0,0,0.18),inset_0_0_0_1.5px_var(--color-gold)]">
                 {/* score band */}
-                <div className="flex items-center gap-[14px] bg-[linear-gradient(135deg,var(--color-hred),#a50d27_55%,#8e0b22)] px-[14px] py-[12px] text-white">
+                <div className="flex items-center gap-[14px] bg-[linear-gradient(135deg,var(--color-hred),#a50d27_55%,#8e0b22)] px-[14px] py-[12px] text-white max-sm:gap-[10px] max-sm:py-[8px]">
                   <div className="min-w-0 flex-1">
                     <div className="text-[11.5px] font-bold tracking-[0.12em] text-[#fff3dc] uppercase">Winner&rsquo;s score</div>
-                    <div className="mt-[6px] flex flex-wrap gap-[5px]">
+                    {/* the full breakdown; on phones just a one-line status to keep the pinned bar short */}
+                    <div className="mt-[6px] flex flex-wrap gap-[5px] max-sm:hidden">
                       {r.lines.length ? (
                         r.lines.map((l) => (
                           <span
@@ -223,18 +224,25 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
                       ))}
                     </div>
                     {r.cardTotal < target && (
-                      <div className="mt-[6px] text-[12px] font-semibold text-white">
+                      <div className="mt-[6px] text-[12px] font-semibold text-white max-sm:hidden">
                         Below the {target}-point target: can&rsquo;t call Stop yet.
                       </div>
                     )}
+                    <div className="mt-[2px] text-[13px] leading-snug font-semibold text-white sm:hidden">
+                      {!r.lines.length
+                        ? "Add the winner's cards"
+                        : r.cardTotal < target
+                          ? `Below the ${target}-point target`
+                          : `${r.cardTotal} card pts${r.steps.length > 1 ? ` · ${r.steps.length - 1} bonus${r.steps.length > 2 ? "es" : ""}` : ""}`}
+                    </div>
                   </div>
                   {/* gold medallion; keyed so it pops when the score changes */}
                   <div
                     key={r.score}
-                    className="deal-in grid size-[76px] flex-none place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffe089,var(--color-gold)_60%,#e2a520)] shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_0_0_3px_rgba(255,255,255,0.45)]"
+                    className="deal-in grid size-[76px] flex-none place-items-center rounded-full max-sm:size-[56px] bg-[radial-gradient(circle_at_35%_30%,#ffe089,var(--color-gold)_60%,#e2a520)] shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_0_0_3px_rgba(255,255,255,0.45)]"
                   >
                     <div className="text-center leading-none">
-                      <div className="font-serif text-[32px] font-black text-[#7d0b1a] tabular-nums">{r.score}</div>
+                      <div className="font-serif text-[32px] font-black text-[#7d0b1a] tabular-nums max-sm:text-[24px]">{r.score}</div>
                       <div className="text-[10px] font-bold tracking-[0.1em] text-[#5c0a14] uppercase">pts</div>
                     </div>
                   </div>
@@ -242,7 +250,7 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
 
                 {/* who pays whom */}
                 <div
-                  className="grid gap-[8px] bg-[#f1e6d2] p-[10px]"
+                  className="grid gap-[8px] bg-[#f1e6d2] p-[10px] max-sm:gap-[6px] max-sm:p-[8px]"
                   style={{ gridTemplateColumns: `repeat(${opponents.length + 1}, minmax(0, 1fr))` }}
                 >
                   {opponents.map((_, i) => (
@@ -267,7 +275,7 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
+            className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer max-sm:top-[12px] max-sm:right-[12px] max-sm:size-[32px] place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
           >
             <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
@@ -326,7 +334,7 @@ function CardRow({
         {hint && <div className="text-[11px] text-muted">{hint}</div>}
       </div>
       <Stepper value={value} max={max} onChange={onChange} label={stepperLabel} />
-      {children && <div className="flex flex-wrap items-center gap-[6px]">{children}</div>}
+      {children && <div className="flex flex-wrap items-center gap-[6px] max-sm:basis-full">{children}</div>}
     </div>
   );
 }
@@ -454,20 +462,20 @@ function Segmented<T extends string | number>({
 function PayCard({ name, amount, notes = [], winner = false }: { name: string; amount: number; notes?: string[]; winner?: boolean }) {
   return (
     <div
-      className={`flex flex-col items-center rounded-[10px] px-[6px] pt-[7px] pb-[8px] text-center shadow-[0_2px_6px_rgba(0,0,0,0.12)] ${
+      className={`flex flex-col items-center rounded-[10px] px-[6px] pt-[7px] pb-[8px] text-center shadow-[0_2px_6px_rgba(0,0,0,0.12)] max-sm:pt-[4px] max-sm:pb-[5px] ${
         winner ? "bg-gold-soft ring-[2px] ring-gold" : "bg-card"
       }`}
     >
       <div className="text-[11px] font-bold tracking-[0.06em] text-[#7a5418] uppercase">{name}</div>
       <div
         key={amount}
-        className={`deal-in font-serif text-[26px] leading-[1.1] font-black tabular-nums ${
+        className={`deal-in font-serif text-[26px] leading-[1.1] font-black tabular-nums max-sm:text-[21px] ${
           amount > 0 ? "text-hgreen" : amount < 0 ? "text-hred" : "text-muted"
         }`}
       >
         {amount > 0 ? `+${amount}` : amount < 0 ? `−${-amount}` : "0"}
       </div>
-      <div className="text-[11px] leading-tight text-muted">
+      <div className="text-[11px] leading-tight text-muted max-sm:text-[10.5px]">
         {notes.length ? notes.join(", ") : winner ? "collects" : "pays"}
       </div>
     </div>
