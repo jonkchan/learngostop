@@ -35,7 +35,9 @@ export function SectionTitle({
     >
       <Blossom className="size-[10pt] flex-none self-center" />
       {children}
-      <span className="text-[9pt] font-medium text-muted">{ko}</span>
+      <span lang="ko" className="text-[9pt] font-medium text-muted">
+        {ko}
+      </span>
       {aside && <span className="ml-auto self-center">{aside}</span>}
     </h2>
   );

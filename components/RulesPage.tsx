@@ -319,7 +319,9 @@ export function RulesPage() {
             </dl>
           </div>
           <h3 className="mt-[10pt] mb-[2pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
-            Penalties for losers <span className="font-medium text-muted">박 · loser pays ×2</span>
+            Penalties for losers <span className="font-medium text-muted">
+              <span lang="ko">박</span> · loser pays ×2
+            </span>
           </h3>
           <Terms items={penalties} />
           <p className="mt-[2pt] text-[7.4pt] text-muted">
@@ -377,7 +379,9 @@ function GoStopLabel({ en, ko, icon }: { en: string; ko: string; icon: ReactNode
     <div className="mb-[3pt] flex items-center gap-[5pt] font-serif text-[18pt] leading-none font-black tracking-[0.02em]">
       {icon}
       {en}
-      <span className="text-[10pt] text-gold">{ko}</span>
+      <span lang="ko" className="text-[10pt] text-gold">
+        {ko}
+      </span>
     </div>
   );
 }
