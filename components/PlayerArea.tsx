@@ -86,11 +86,11 @@ function LargeExample() {
                   key={i}
                   // dealt in pile by pile, card by card; on hover the card lifts most and its neighbours a little
                   className={`deal-in relative transition-[translate] duration-200 ease-out hover:z-10 hover:-translate-y-[14px] motion-reduce:transition-none [&:has(+:hover)]:-translate-y-[6px] [:hover+&]:-translate-y-[6px] ${
-                    i === 0 ? "" : p.cards.length > 5 ? "-ml-[22px]" : "-ml-[10px]"
+                    i === 0 ? "" : p.cards.length > 5 ? "-ml-[22px] max-sm:-ml-[24px]" : "-ml-[10px]"
                   }`}
                   style={{ animationDelay: `${pileIndex * 140 + i * 55}ms` }}
                 >
-                  <MiniCard card={c} size="h-[86px] w-[53px]" />
+                  <MiniCard card={c} size="h-[86px] w-[53px] max-sm:h-[72px] max-sm:w-[44px]" />
                 </div>
               ))}
             </div>

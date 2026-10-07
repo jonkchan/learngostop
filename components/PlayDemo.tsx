@@ -1,14 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
 import { demos, type Demo, type Place } from "@/lib/playDemos";
+import { ViewportOverlay } from "./ViewportOverlay";
 
 /**
  * A Special Plays row that opens an animated demo of that play when clicked.
  * Screen only: in print it's a plain row (the ▶ hint is hidden).
  */
-export function PlayDemoRow({ play, className, children }: { play: string; className: string; children: ReactNode }) {
+export function PlayDemoRow({
+  play,
+  className,
+  children,
+}: {
+  play: string;
+  className: string;
+  children: ReactNode;
+}) {
   const demo = demos[play];
   const [open, setOpen] = useState(false);
   if (!demo) return <div className={className}>{children}</div>;
@@ -34,12 +42,20 @@ export function PlayDemoRow({ play, className, children }: { play: string; class
           aria-hidden="true"
           className="absolute top-[2pt] -left-[11pt] grid size-[9pt] place-items-center rounded-full bg-hred text-white opacity-70 transition-opacity group-hover:opacity-100 print:hidden"
         >
-          <svg viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
+          <svg
+            viewBox="0 0 10 10"
+            className="ml-[0.5pt] size-[4.5pt]"
+            fill="currentColor"
+          >
             <path d="M2 1l7 4-7 4z" />
           </svg>
         </span>
       </div>
-      {open && createPortal(<DemoDialog demo={demo} onClose={() => setOpen(false)} />, document.body)}
+      {open && (
+        <ViewportOverlay>
+          <DemoDialog demo={demo} onClose={() => setOpen(false)} />
+        </ViewportOverlay>
+      )}
     </>
   );
 }
@@ -58,7 +74,11 @@ function position(p: Place): { x: number; y: number; z: number } {
     case "opp":
       return { x: 24 + p.slot * 34, y: 26, z: 5 + p.slot };
     case "table":
-      return { x: 70 + p.slot * 100 + stack * 12, y: 122 - stack * 4 - (p.lift ? 6 : 0), z: 10 + stack };
+      return {
+        x: 70 + p.slot * 100 + stack * 12,
+        y: 122 - stack * 4 - (p.lift ? 6 : 0),
+        z: 10 + stack,
+      };
     case "pile":
       return { x: 506, y: p.lift ? 108 : 122, z: p.lift ? 60 : 20 };
     case "hand":
@@ -118,12 +138,17 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
       aria-modal="true"
       aria-label={demo.title}
       onClick={onClose}
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
+      className="absolute inset-0 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
     >
-      <div className="relative w-full max-w-[680px]" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="relative w-full max-w-[680px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="max-h-[calc(100dvh-32px)] overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)]">
           <div className="mb-[10px] flex items-center justify-between gap-[12px] pr-[18px]">
-            <div className="font-serif text-[20px] font-black text-hred">{demo.title}</div>
+            <div className="font-serif text-[20px] font-black text-hred">
+              {demo.title}
+            </div>
             <AutoplaySwitch
               on={autoplay}
               onChange={(on) => {
@@ -143,7 +168,10 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
             <ZoneLabel x={506} y={92} text="Pile" />
             <ZoneLabel x={24} y={220} text="Your hand" />
             <ZoneLabel x={440} y={220} text="Your captures" />
-            <div className="absolute border-t border-dashed border-[#d9c7a5]" style={{ left: "3%", right: "3%", top: pct(208, H) }} />
+            <div
+              className="absolute border-t border-dashed border-[#d9c7a5]"
+              style={{ left: "3%", right: "3%", top: pct(208, H) }}
+            />
 
             {cards.map(({ id, place, visible }) => {
               const { x, y, z } = position(place);
@@ -160,7 +188,11 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
                     opacity: visible ? 1 : 0,
                   }}
                 >
-                  <DemoCard id={id} faceDown={!!place.faceDown} glow={!!place.lift} />
+                  <DemoCard
+                    id={id}
+                    faceDown={!!place.faceDown}
+                    glow={!!place.lift}
+                  />
                 </div>
               );
             })}
@@ -176,7 +208,10 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
 
           {/* caption + controls */}
           <div className="mt-[12px] flex items-center gap-[10px]">
-            <p className="min-h-[44px] flex-1 text-[15px] leading-snug text-ink" aria-live="polite">
+            <p
+              className="min-h-[44px] flex-1 text-[15px] leading-snug text-ink"
+              aria-live="polite"
+            >
               {caption}
             </p>
             <div className="flex flex-none items-center gap-[6px]">
@@ -207,7 +242,15 @@ function DemoDialog({ demo, onClose }: { demo: Demo; onClose: () => void }) {
           aria-label="Close"
           className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
         >
-          <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            className="size-[18px]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
@@ -228,11 +271,21 @@ function ZoneLabel({ x, y, text }: { x: number; y: number; text: string }) {
 }
 
 /** A card face (real art) and a red hwatu back that cross-fade when flipped. */
-function DemoCard({ id, faceDown, glow }: { id: string; faceDown: boolean; glow: boolean }) {
+function DemoCard({
+  id,
+  faceDown,
+  glow,
+}: {
+  id: string;
+  faceDown: boolean;
+  glow: boolean;
+}) {
   return (
     <div
       className={`relative size-full rounded-[4px] transition-shadow duration-300 ${
-        glow ? "shadow-[0_0_0_2px_var(--color-gold),0_6px_14px_rgba(0,0,0,0.35)]" : "shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
+        glow
+          ? "shadow-[0_0_0_2px_var(--color-gold),0_6px_14px_rgba(0,0,0,0.35)]"
+          : "shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
       }`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- tiny local SVGs, animated by position */}
@@ -251,7 +304,15 @@ function DemoCard({ id, faceDown, glow }: { id: string; faceDown: boolean; glow:
   );
 }
 
-function CtrlButton({ label, onClick, icon }: { label: string; onClick: () => void; icon: string }) {
+function CtrlButton({
+  label,
+  onClick,
+  icon,
+}: {
+  label: string;
+  onClick: () => void;
+  icon: string;
+}) {
   return (
     <button
       type="button"
@@ -259,7 +320,16 @@ function CtrlButton({ label, onClick, icon }: { label: string; onClick: () => vo
       aria-label={label}
       className="grid size-[34px] cursor-pointer place-items-center rounded-full border-[1.5px] border-rule bg-card text-ink transition-colors hover:border-gold hover:bg-gold-soft"
     >
-      <svg viewBox="0 0 24 24" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        className="size-[16px]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d={icon} />
       </svg>
     </button>
@@ -286,7 +356,13 @@ function writeAutoplay(on: boolean) {
   }
 }
 
-function AutoplaySwitch({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+function AutoplaySwitch({
+  on,
+  onChange,
+}: {
+  on: boolean;
+  onChange: (on: boolean) => void;
+}) {
   return (
     <button
       type="button"

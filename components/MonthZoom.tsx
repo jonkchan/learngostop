@@ -9,8 +9,8 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { createPortal } from "react-dom";
 import { describeCard, months } from "@/lib/deck";
+import { ViewportOverlay } from "./ViewportOverlay";
 
 /**
  * Wraps a month block: clicking it opens a large view of that month's four cards,
@@ -68,16 +68,16 @@ export function MonthZoom({
       >
         {children}
       </div>
-      {open !== null &&
-        createPortal(
+      {open !== null && (
+        <ViewportOverlay>
           <MonthDialog
             num={open}
             dir={dir}
             onClose={() => setOpen(null)}
             onStep={step}
-          />,
-          document.body,
-        )}
+          />
+        </ViewportOverlay>
+      )}
     </>
   );
 }
@@ -106,7 +106,8 @@ function MonthDialog({
     if (!start) return;
     const dx = e.changedTouches[0].clientX - start.x;
     const dy = e.changedTouches[0].clientY - start.y;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) onStep(dx < 0 ? 1 : -1);
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5)
+      onStep(dx < 0 ? 1 : -1);
   };
   return (
     <div
@@ -114,7 +115,7 @@ function MonthDialog({
       aria-modal="true"
       aria-label={`${month.name} cards`}
       onClick={onClose}
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
+      className="absolute inset-0 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
     >
       <div
         className="relative w-full max-w-[720px] touch-pan-y"
@@ -196,7 +197,9 @@ function MonthDialog({
                     <div className="text-[14px] font-bold text-ink max-sm:text-[13px]">
                       {info.title}
                     </div>
-                    <div className="text-[12px] text-muted max-sm:line-clamp-2 max-sm:text-[11px]">{info.detail}</div>
+                    <div className="text-[12px] text-muted max-sm:line-clamp-2 max-sm:text-[11px]">
+                      {info.detail}
+                    </div>
                   </figcaption>
                 </figure>
               );

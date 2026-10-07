@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import { ViewportOverlay } from "./ViewportOverlay";
 
 /**
  * Makes a block on the sheet clickable: opens `large` in a centered overlay
@@ -45,16 +45,19 @@ export function Zoomable({
       >
         {children}
       </div>
-      {open &&
-        createPortal(
+      {open && (
+        <ViewportOverlay>
           <div
             role="dialog"
             aria-modal="true"
             aria-label={label}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
+            className="absolute inset-0 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
           >
-            <div className="relative w-full max-w-[760px]" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="relative w-full max-w-[760px]"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="max-h-[calc(100dvh-32px)] overflow-y-auto rounded-[16px] bg-paper px-[22px] pt-[20px] pb-[22px] shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-gold)]">
                 {large}
               </div>
@@ -77,9 +80,9 @@ export function Zoomable({
                 </svg>
               </button>
             </div>
-          </div>,
-          document.body,
-        )}
+          </div>
+        </ViewportOverlay>
+      )}
     </>
   );
 }

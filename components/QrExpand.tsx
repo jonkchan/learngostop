@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import { ViewportOverlay } from "./ViewportOverlay";
 
 /**
  * Wraps the small header QR code: clicking it opens a large, easy-to-scan copy in an overlay.
@@ -39,15 +39,15 @@ export function QrExpand({
       >
         {children}
       </button>
-      {open &&
+      {open && (
         // a portal, so the overlay isn't clipped or scaled by the letter-size sheet
-        createPortal(
+        <ViewportOverlay>
           <div
             role="dialog"
             aria-modal="true"
             aria-label={`QR code for ${label}`}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-[24px] backdrop-blur-[2px] print:hidden"
+            className="absolute inset-0 grid place-items-center bg-black/60 p-[24px] backdrop-blur-[2px] print:hidden"
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -59,19 +59,29 @@ export function QrExpand({
                 aria-label="Close"
                 className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
               >
-                <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-[18px]"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
                   <path d="M6 6l12 12M18 6L6 18" />
                 </svg>
               </button>
               <div className="size-[min(72vw,300px)]">{large}</div>
               <div className="text-center font-sans">
                 <div className="text-[13px] text-muted">Scan to open</div>
-                <div className="font-serif text-[22px] font-black text-hred">{label}</div>
+                <div className="font-serif text-[22px] font-black text-hred">
+                  {label}
+                </div>
               </div>
             </div>
-          </div>,
-          document.body,
-        )}
+          </div>
+        </ViewportOverlay>
+      )}
     </>
   );
 }
