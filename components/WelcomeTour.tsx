@@ -52,29 +52,48 @@ const steps: Step[] = [
   },
 ];
 
+/** Cookie twin of SEEN_KEY: some browsers clear local storage and cookies separately, so we keep both. */
+const SEEN_COOKIE = "lgs_welcome_seen";
+
 function markSeen() {
   try {
     localStorage.setItem(SEEN_KEY, "1");
   } catch {
-    // storage blocked (private mode etc.): the welcome just shows again next time
+    // storage blocked (private mode etc.): the cookie below may still work
+  }
+  try {
+    document.cookie = `${SEEN_COOKIE}=1; Max-Age=${60 * 60 * 24 * 365}; Path=/; SameSite=Lax${
+      location.protocol === "https:" ? "; Secure" : ""
+    }`;
+  } catch {
+    // cookies blocked: the welcome just shows again next time
+  }
+}
+
+/** Seen before, per local storage or the cookie. */
+function hasSeen(): boolean {
+  try {
+    if (localStorage.getItem(SEEN_KEY) === "1") return true;
+  } catch {
+    // fall through to the cookie
+  }
+  try {
+    return document.cookie.split("; ").includes(`${SEEN_COOKIE}=1`);
+  } catch {
+    return false;
   }
 }
 
 /**
  * First visit: a welcome dialog offering a short spotlight tour of the page's interactive bits.
- * Remembered in localStorage; the floating Tour button (TOUR_EVENT) replays the tour. Screen only.
+ * Remembered in localStorage and a cookie; the floating Tour button (TOUR_EVENT) replays the tour. Screen only.
  */
 export function WelcomeTour() {
   const [mode, setMode] = useState<"off" | "welcome" | "tour">("off");
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = localStorage.getItem(SEEN_KEY) === "1";
-    } catch {
-      seen = false;
-    }
+    const seen = hasSeen();
     // a beat after load, so the page is there to look at behind the dialog
     const t = seen ? undefined : setTimeout(() => setMode("welcome"), 700);
     const replay = () => {
