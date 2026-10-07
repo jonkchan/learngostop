@@ -134,6 +134,7 @@ function Welcome({ onTour, onSkip }: { onTour: () => void; onSkip: () => void })
         onClick={(e) => e.stopPropagation()}
         className="deal-in relative w-full max-w-[420px] rounded-[16px] bg-paper px-[24px] pt-[24px] pb-[20px] text-center shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)]"
       >
+        <CloseX label="Close" onClick={onSkip} />
         <Blossom className="mx-auto mb-[8px] size-[34px]" />
         <h2 id="welcome-title" className="font-serif text-[24px] leading-tight font-black text-ink">
           Welcome to Go-Stop{" "}
@@ -265,6 +266,7 @@ function TourStep({ index, onStep, onClose }: { index: number; onStep: (i: numbe
           !box ? "top-1/2 -translate-y-1/2" : cardAtTop ? "top-[16px]" : "bottom-[16px]"
         }`}
       >
+        <CloseX label="End tour" onClick={onClose} />
         <div className="flex items-center gap-[5px]" aria-hidden="true">
           {steps.map((_, i) => (
             <span
@@ -311,5 +313,21 @@ function TourStep({ index, onStep, onClose }: { index: number; onStep: (i: numbe
         </div>
       </div>
     </div>
+  );
+}
+
+/** The red ✕ badge on the card's corner, same as the other dialogs. */
+function CloseX({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="absolute -top-[12px] -right-[12px] grid size-[32px] cursor-pointer place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
+    >
+      <svg viewBox="0 0 24 24" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
   );
 }
