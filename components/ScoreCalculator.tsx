@@ -64,11 +64,11 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
         aria-modal="true"
         aria-label="Score calculator"
         onClick={onClose}
-        className="absolute inset-0 grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] max-sm:place-items-end max-sm:p-0 print:hidden"
+        className="absolute inset-0 grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
       >
         <div className="relative w-full max-w-[560px]" onClick={(e) => e.stopPropagation()}>
-          <div className="max-h-[calc(100dvh-32px)] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] text-ink shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)] max-sm:max-h-[calc(100dvh-24px)] max-sm:rounded-b-none max-sm:px-[16px] max-sm:shadow-[0_-8px_30px_rgba(0,0,0,0.35),inset_0_3px_0_var(--color-hred)]">
-            <div className="mb-[12px] flex flex-wrap items-center justify-between gap-[10px] pr-[18px] max-sm:pr-[40px]">
+          <div className="max-h-[calc(100dvh-32px)] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] text-ink shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)] max-sm:px-[14px]">
+            <div className="mb-[12px] flex flex-wrap items-center justify-between gap-[10px] pr-[18px]">
               <div className="font-serif text-[20px] font-black text-hred">
                 Score calculator{" "}
                 <span lang="ko" className="text-[15px] font-medium whitespace-nowrap text-muted">
@@ -192,7 +192,7 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
             {/* result */}
             {/* pinned to the bottom while scrolling (on phones the inputs are taller than the screen) */}
             <div
-              className="sticky -bottom-[16px] z-10 -mx-[18px] mt-[14px] bg-paper px-[18px] pt-[2px] pb-[16px] max-sm:-mx-[16px] max-sm:px-[16px] max-sm:pb-[12px] shadow-[0_-10px_14px_-10px_rgba(0,0,0,0.25)] sm:static sm:mx-0 sm:p-0 sm:shadow-none"
+              className="sticky -bottom-[16px] z-10 -mx-[18px] mt-[14px] bg-paper px-[18px] pt-[2px] pb-[16px] max-sm:-mx-[14px] max-sm:px-[14px] max-sm:pb-[12px] shadow-[0_-10px_14px_-10px_rgba(0,0,0,0.25)] sm:static sm:mx-0 sm:p-0 sm:shadow-none"
               aria-live="polite"
             >
               <div className="overflow-hidden rounded-[14px] shadow-[0_4px_14px_rgba(0,0,0,0.18),inset_0_0_0_1.5px_var(--color-gold)]">
@@ -212,7 +212,14 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
                           </span>
                         ))
                       ) : (
-                        <span className="text-[13px] text-white">Add the winner&rsquo;s cards above</span>
+                        <span className="rounded-full border-[1.5px] border-dashed border-white/70 px-[9px] py-[1px] text-[12px] font-semibold whitespace-nowrap text-white">
+                          ↑ Add the winner&rsquo;s cards
+                        </span>
+                      )}
+                      {r.lines.length > 0 && r.cardTotal < target && (
+                        <span className="rounded-full bg-black/30 px-[8px] py-[2px] text-[12px] font-bold whitespace-nowrap text-white">
+                          Needs {target} pts to Stop
+                        </span>
                       )}
                       {r.steps.slice(1).map((step) => (
                         <span
@@ -223,16 +230,11 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
                         </span>
                       ))}
                     </div>
-                    {r.cardTotal < target && (
-                      <div className="mt-[6px] text-[12px] font-semibold text-white max-sm:hidden">
-                        Below the {target}-point target: can&rsquo;t call Stop yet.
-                      </div>
-                    )}
                     <div className="mt-[2px] text-[13px] leading-snug font-semibold text-white sm:hidden">
                       {!r.lines.length
                         ? "Add the winner's cards"
                         : r.cardTotal < target
-                          ? `Below the ${target}-point target`
+                          ? `Needs ${target} pts to Stop`
                           : `${r.cardTotal} card pts${r.steps.length > 1 ? ` · ${r.steps.length - 1} bonus${r.steps.length > 2 ? "es" : ""}` : ""}`}
                     </div>
                   </div>
@@ -275,7 +277,7 @@ export function ScoreCalculator({ open, onClose }: { open: boolean; onClose: () 
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer max-sm:top-[12px] max-sm:right-[12px] max-sm:size-[32px] place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
+            className="absolute -top-[14px] -right-[14px] grid size-[36px] cursor-pointer place-items-center rounded-full bg-hred text-white shadow-[0_4px_12px_rgba(0,0,0,0.35),0_0_0_3px_var(--color-paper)] transition-transform hover:scale-110"
           >
             <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
