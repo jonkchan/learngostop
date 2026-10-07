@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cardIds } from "@/lib/deck";
 import { GoStopDemoTrigger } from "./GoStopDemo";
-import { HighlightRow } from "./Highlight";
+import { HighlightRow, HighlightRowButton } from "./Highlight";
 import { PlayerArea } from "./PlayerArea";
 import { Ko, SectionTitle, Sheet, Terms } from "./Sheet";
 
@@ -149,7 +149,7 @@ export function RulesPage() {
           <table className="mb-[5pt] w-full border-collapse text-[8pt]">
             <thead>
               <tr>
-                <th></th>
+                <td></td>
                 {["1st pass", "2nd pass", "After the deal"].map((g) => (
                   <th key={g} colSpan={g === "After the deal" ? 3 : 2} className={groupTh}>
                     {g}
@@ -157,7 +157,9 @@ export function RulesPage() {
                 ))}
               </tr>
               <tr>
-                <th className={th}></th>
+                <th className={th}>
+                  <span className="sr-only">Player</span>
+                </th>
                 {[1, 2].flatMap((r) => [
                   <th key={`${r}p`} className={thNum}>
                     Each
@@ -308,6 +310,7 @@ function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string;
       <HighlightRow setKey={group} ids={cards}>
         <td colSpan={3} className={`${td} ${tint} pt-[3pt] text-[7.2pt] font-bold tracking-[0.05em] text-hred uppercase`}>
           {group}
+          <HighlightRowButton setKey={group} label={group} />
         </td>
       </HighlightRow>
       {rows.map((r, i) => (
@@ -316,6 +319,7 @@ function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string;
             {r.dot && <Dot className={r.dot} />}
             {r.name}
             {r.ko && <Ko className="ml-[3pt] leading-none text-hred">{r.ko}</Ko>}
+            <HighlightRowButton setKey={r.name} label={r.name} />
           </td>
           <td className={td}>{r.need}</td>
           <td className={`${td} text-right font-bold whitespace-nowrap`}>{r.pts}</td>

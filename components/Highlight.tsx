@@ -119,6 +119,8 @@ export const MONTH_GRID_ID = "month-grid";
 /**
  * A scoring-table row (page 2) that highlights its cards in the month grid (page 1) and scrolls them into view.
  * Screen only: behaves like a plain table row when printed.
+ * The row is clickable with a mouse; keyboard and screen readers use a hidden toggle button in its first cell,
+ * so the row keeps its table semantics.
  */
 export function HighlightRow({
   setKey,
@@ -140,22 +142,23 @@ export function HighlightRow({
   return (
     <tr
       data-highlight-trigger
-      tabIndex={0}
-      role="button"
-      aria-pressed={selected}
       title="Show these cards on page 1"
       onClick={pick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          pick();
-        }
-      }}
-      className={`cursor-pointer transition-colors hover:bg-gold-soft/60 focus-visible:outline-[1.5pt] focus-visible:outline-gold print:bg-transparent ${
+      className={`cursor-pointer transition-colors hover:bg-gold-soft/60 has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent ${
         selected ? "bg-gold-soft" : ""
       } ${className}`}
     >
       {children}
     </tr>
+  );
+}
+
+/** The hidden toggle inside a HighlightRow's first cell; its click bubbles up to the row. */
+export function HighlightRowButton({ setKey, label }: { setKey: string; label: string }) {
+  const { active } = useContext(HighlightContext);
+  return (
+    <button type="button" aria-pressed={active?.key === setKey} className="open-btn sr-only">
+      Show {label} cards on page 1
+    </button>
   );
 }

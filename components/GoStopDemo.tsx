@@ -196,6 +196,21 @@ function GoStopDialog({ onClose }: { onClose: () => void }) {
           <div className="mt-[12px] flex items-center gap-[10px] max-sm:flex-col max-sm:items-stretch">
             <p className="min-h-[44px] flex-1 text-[15px] max-sm:min-h-[62px] leading-snug text-ink" aria-live="polite">
               {f.caption}
+              {/* the payout chips are visual; spell them out for screen readers */}
+              {f.pay && (
+                <span className="sr-only">
+                  {" "}
+                  Payout:{" "}
+                  {players
+                    .map((p) => {
+                      const n = f.pay![p.id];
+                      const s = p.id === "you" ? "" : "s"; // "you pay" / "Player B pays"
+                      return `${p.name} ${n > 0 ? `receive${s} ${n}` : n < 0 ? `pay${s} ${-n}` : `pay${s} nothing`}`;
+                    })
+                    .join(", ")}
+                  .
+                </span>
+              )}
             </p>
             <div className="flex flex-none items-center gap-[6px] max-sm:justify-end">
               <CtrlButton label="Previous step" onClick={() => setFrame((x) => Math.max(0, x - 1))} icon="M15 6l-6 6 6 6" />
