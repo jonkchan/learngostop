@@ -176,19 +176,30 @@ function TourStep({ index, onStep, onClose }: { index: number; onStep: (i: numbe
   const step = steps[index];
   const last = index === steps.length - 1;
   const [box, setBox] = useState<Box | null>(null);
-  const [vh, setVh] = useState(0);
+  /** Card at the top of the screen instead of the bottom. Decided once per step, so it doesn't jump while scrolling. */
+  const [cardAtTop, setCardAtTop] = useState(false);
 
   useEffect(() => {
     const el = step.target ? document.querySelector(step.target) : null;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    let placed = 0;
+    if (el) {
+      // Scroll the target into the upper part of the screen, leaving the bottom for the card. Work out where it
+      // will end up first (the page can't scroll past its end) and put the card at the top only if it would collide.
+      const viewH = window.visualViewport?.height ?? window.innerHeight;
+      const r = el.getBoundingClientRect();
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const top = Math.min(maxScroll, Math.max(0, window.scrollY + r.top - viewH * 0.18));
+      const finalBottom = r.bottom + window.scrollY - top;
+      window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+      placed = requestAnimationFrame(() => setCardAtTop(finalBottom > viewH * 0.62));
+    }
     let frame = 0;
     const measure = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const vv = window.visualViewport;
         const scale = vv?.scale ?? 1;
-        setVh((vv?.height ?? window.innerHeight) * scale);
         if (!el) return setBox(null);
         const r = el.getBoundingClientRect();
         const ox = vv?.offsetLeft ?? 0;
@@ -201,6 +212,7 @@ function TourStep({ index, onStep, onClose }: { index: number; onStep: (i: numbe
     window.addEventListener("resize", measure);
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(placed);
       window.removeEventListener("scroll", measure);
       window.removeEventListener("resize", measure);
     };
@@ -222,8 +234,6 @@ function TourStep({ index, onStep, onClose }: { index: number; onStep: (i: numbe
   const pad = 8;
   const hole = box && { x: box.x - pad, y: box.y - pad, w: box.w + pad * 2, h: box.h + pad * 2 };
   const dim = "absolute bg-black/60";
-  // put the card on the opposite half of the screen from the spotlight, so it never covers it
-  const cardAtTop = box ? box.y + box.h / 2 > vh / 2 : false;
 
   return (
     <div
