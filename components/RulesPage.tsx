@@ -288,9 +288,12 @@ export function RulesPage() {
           </h3>
           <Terms items={penalties} />
 
-          <div className="mt-[9pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
-            <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}
-            <b>Stop</b>: 4 + 1 (for the Go) = <b>5 pts</b>.
+          <div className="mt-[9pt] flex items-center gap-[6pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
+            <CalculatorIcon />
+            <p>
+              <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}
+              <b>Stop</b>: 4 + 1 (for the Go) = <b>5 pts</b>.
+            </p>
           </div>
         </div>
       </div>
@@ -335,6 +338,20 @@ function GoStopLabel({ en, ko, icon }: { en: string; ko: string; icon: ReactNode
       {en}
       <span className="text-[10pt] text-gold">{ko}</span>
     </div>
+  );
+}
+
+/** A calculator in a dark-gold circle: marks the worked scoring example. */
+function CalculatorIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-[13pt] flex-none" aria-hidden="true">
+      <circle cx="12" cy="12" r="11.5" fill="#a06c00" />
+      <rect x="7" y="5" width="10" height="14" rx="1.6" fill="#fff" />
+      <rect x="8.6" y="6.6" width="6.8" height="2.8" rx="0.6" fill="#a06c00" />
+      {[11.6, 14.4, 17.2].flatMap((y) =>
+        [9.4, 12, 14.6].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y - 0.4} r="0.95" fill="#a06c00" />),
+      )}
+    </svg>
   );
 }
 
