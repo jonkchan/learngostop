@@ -91,12 +91,13 @@ export function DemoChip({
         data-tour={tour}
         aria-label={ariaLabel}
         onClick={() => setOpen(true)}
-        className="flex cursor-pointer items-center gap-[3pt] rounded-full bg-hred select-none py-[1.5pt] pr-[6pt] pl-[5pt] font-sans text-[7pt] font-bold tracking-[0.02em] text-white opacity-85 transition-opacity hover:opacity-100 focus-visible:outline-[1.5pt] focus-visible:outline-offset-[1pt] focus-visible:outline-gold print:hidden"
+        className="flex cursor-pointer items-center gap-[3pt] rounded-full bg-hred select-none py-[2.5pt] pr-[6pt] pl-[5pt] font-sans text-[7pt] leading-none font-bold tracking-[0.02em] text-white opacity-85 transition-opacity hover:opacity-100 focus-visible:outline-[1.5pt] focus-visible:outline-offset-[1pt] focus-visible:outline-gold print:hidden"
       >
-        <svg aria-hidden="true" viewBox="0 0 10 10" className="size-[5pt]" fill="currentColor">
+        <svg aria-hidden="true" viewBox="0 0 10 10" className="block size-[5pt] flex-none" fill="currentColor">
           <path d="M2 1l7 4-7 4z" />
         </svg>
-        {label}
+        {/* trimmed to the capital height so the word centers on the ▶ (same trick as the step numbers) */}
+        <span className="[text-box:trim-both_cap_alphabetic]">{label}</span>
       </button>
       {open && (
         <ViewportOverlay>
