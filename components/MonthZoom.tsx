@@ -124,7 +124,7 @@ function MonthDialog({
         onTouchEnd={onTouchEnd}
       >
         <div
-          className="relative max-h-[calc(100dvh-32px)] w-full max-w-[720px] overflow-y-auto rounded-[16px] bg-paper px-[20px] pt-[18px] pb-[20px]"
+          className="relative max-h-[calc(100dvh-32px)] w-full max-w-[720px] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[20px] pt-[18px] pb-[20px]"
           style={{
             boxShadow: `0 20px 60px rgba(0,0,0,0.45), inset 0 0 0 3px ${month.color}`,
           }}
