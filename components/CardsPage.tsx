@@ -58,7 +58,7 @@ const sets: { mark: React.ReactNode; ko: string; name: string; meaning: string; 
 
 export function CardsPage() {
   return (
-    <Sheet folio="Go-Stop Guide · Page 1 of 2 · The Cards">
+    <Sheet folio="Go-Stop Guide · Page 1 of 2 · The Cards · Month icons by Sem, Fuda Wiki (CC BY 4.0)">
       <header className="relative mb-[10pt] border-b-[2pt] border-ink pb-[6pt]">
         <GwangFan />
         <a

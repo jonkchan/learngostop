@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Month } from "@/lib/deck";
 import { HwatuCard } from "./HwatuCard";
 import { Ko } from "./Sheet";
@@ -12,12 +13,23 @@ export function MonthBlock({ month }: { month: Month }) {
         backgroundImage: `linear-gradient(to bottom, ${month.color}22, transparent 45%)`,
       }}
     >
-      <div className="mb-[5pt] flex items-center gap-[5pt]">
-        <div
-          className="grid size-[15pt] flex-none place-items-center rounded-full select-none text-[8pt] leading-none font-bold text-white tabular-nums"
-          style={{ backgroundColor: month.color }}
-        >
-          <span className="[text-box:trim-both_cap_alphabetic]">{month.num}</span>
+      <div className="mb-[5pt] flex items-center gap-[6pt]">
+        {/* flower icon (Sem, Fuda Wiki, CC BY 4.0) with the month number as a corner badge */}
+        <div className="relative -my-[1pt] size-[18pt] flex-none select-none">
+          <Image
+            src={`/months/${String(month.num).padStart(2, "0")}.png`}
+            alt=""
+            width={189}
+            height={189}
+            loading="eager"
+            className="size-full"
+          />
+          <span
+            className="absolute -right-[3pt] -bottom-[2pt] grid size-[10pt] place-items-center rounded-full text-[5.6pt] leading-none font-bold text-white tabular-nums shadow-[0_0_0_1pt_var(--color-card)]"
+            style={{ backgroundColor: month.color }}
+          >
+            <span className="[text-box:trim-both_cap_alphabetic]">{month.num}</span>
+          </span>
         </div>
         <div className="text-[8.2pt] leading-[1.1] font-bold">
           {month.name}{" "}
