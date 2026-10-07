@@ -155,7 +155,7 @@ function SetLegend() {
                 {set.months.map((m) => (
                   <span
                     key={m}
-                    className="inline-flex items-center gap-[2pt] rounded-full border-[0.6pt] border-rule bg-card py-[0.5pt] pr-[3pt] pl-[0.5pt] text-[6.5pt] leading-none"
+                    className="inline-flex items-center gap-[2pt] rounded-full border-[0.75pt] border-[#b3a58e] bg-[#f7f1e6] py-[0.5pt] pr-[3pt] pl-[0.5pt] text-[6.5pt] leading-none"
                   >
                     <span
                       className="grid size-[8pt] place-items-center rounded-full select-none text-[5pt] leading-none font-bold text-white tabular-nums"
