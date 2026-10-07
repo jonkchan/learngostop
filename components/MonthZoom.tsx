@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -13,7 +14,7 @@ import { describeCard, months } from "@/lib/deck";
 
 /**
  * Wraps a month block: clicking it opens a large view of that month's four cards,
- * with arrows (and ← → keys) to step through the months. Screen only.
+ * with arrows, ← → keys or a swipe to step through the months. Screen only.
  */
 export function MonthZoom({
   num,
@@ -27,11 +28,12 @@ export function MonthZoom({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState<number | null>(null);
-  const step = useCallback(
-    (d: number) =>
-      setOpen((n) => (n === null ? n : ((n - 1 + d + 12) % 12) + 1)),
-    [],
-  );
+  /** +1 / -1 for the last step, so the cards slide in from that side; 0 when just opened. */
+  const [dir, setDir] = useState(0);
+  const step = useCallback((d: number) => {
+    setDir(d);
+    setOpen((n) => (n === null ? n : ((n - 1 + d + 12) % 12) + 1));
+  }, []);
 
   useEffect(() => {
     if (open === null) return;
@@ -50,10 +52,14 @@ export function MonthZoom({
         role="button"
         tabIndex={0}
         aria-label={`Enlarge ${months[num - 1].name}`}
-        onClick={() => setOpen(num)}
+        onClick={() => {
+          setDir(0);
+          setOpen(num);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            setDir(0);
             setOpen(num);
           }
         }}
@@ -66,6 +72,7 @@ export function MonthZoom({
         createPortal(
           <MonthDialog
             num={open}
+            dir={dir}
             onClose={() => setOpen(null)}
             onStep={step}
           />,
@@ -77,14 +84,30 @@ export function MonthZoom({
 
 function MonthDialog({
   num,
+  dir,
   onClose,
   onStep,
 }: {
   num: number;
+  dir: number;
   onClose: () => void;
   onStep: (d: number) => void;
 }) {
   const month = months[num - 1];
+
+  // swipe left / right to change month (mostly-horizontal swipes only, so scrolling still works)
+  const touch = useRef<{ x: number; y: number } | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touch.current;
+    touch.current = null;
+    if (!start) return;
+    const dx = e.changedTouches[0].clientX - start.x;
+    const dy = e.changedTouches[0].clientY - start.y;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) onStep(dx < 0 ? 1 : -1);
+  };
   return (
     <div
       role="dialog"
@@ -94,8 +117,10 @@ function MonthDialog({
       className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
     >
       <div
-        className="relative w-full max-w-[720px]"
+        className="relative w-full max-w-[720px] touch-pan-y"
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
         <div
           className="relative max-h-[calc(100dvh-32px)] w-full max-w-[720px] overflow-y-auto rounded-[16px] bg-paper px-[20px] pt-[18px] pb-[20px]"
@@ -142,7 +167,12 @@ function MonthDialog({
           </div>
 
           {/* the four cards, big */}
-          <div className="grid grid-cols-2 gap-x-[14px] gap-y-[18px] max-sm:gap-y-[10px] sm:grid-cols-4">
+          <div
+            key={num}
+            className={`grid grid-cols-2 gap-x-[14px] gap-y-[18px] max-sm:gap-y-[10px] sm:grid-cols-4 ${
+              dir > 0 ? "slide-from-right" : dir < 0 ? "slide-from-left" : ""
+            }`}
+          >
             {month.cards.map((card, i) => {
               const info = describeCard(month, card);
               return (

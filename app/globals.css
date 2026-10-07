@@ -72,6 +72,32 @@ body {
   }
 }
 
+/* Month viewer: cards slide in from the side you moved toward */
+@keyframes slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+@keyframes slide-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+.slide-from-right {
+  animation: slide-from-right 260ms ease-out;
+}
+.slide-from-left {
+  animation: slide-from-left 260ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide-from-right,
+  .slide-from-left {
+    animation: none;
+  }
+}
+
 @page {
   size: letter;
   margin: 0;
