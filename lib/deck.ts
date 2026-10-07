@@ -1,10 +1,14 @@
 export type RibbonKind = "hong" | "cheong" | "cho" | "plain";
 
-export type Card =
+export type Card = (
   | { type: "gwang"; caption: string }
   | { type: "animal"; caption: string; tag?: string }
   | { type: "ribbon"; caption: string; ribbon: RibbonKind }
-  | { type: "pi"; caption: string; tag?: string };
+  | { type: "pi"; caption: string; tag?: string }
+) & {
+  /** Card art (filled in below from the month number and position). */
+  img?: string;
+};
 
 export type Month = {
   num: number;
@@ -17,12 +21,12 @@ export type Month = {
 };
 
 const junk: Card = { type: "pi", caption: "Junk" };
-const doubleJunk: Card = { type: "pi", caption: "Double junk", tag: "×2" };
+const doubleJunk: Card = { type: "pi", caption: "×2 junk", tag: "×2" };
 
-export const months: Month[] = [
+const baseMonths: Month[] = [
   {
     num: 1, name: "January · Pine", ko: "송학", note: "Pine & crane", color: "#1f7a3a",
-    cards: [{ type: "gwang", caption: "Crane & Sun" }, { type: "ribbon", caption: "Red poem", ribbon: "hong" }, junk, junk],
+    cards: [{ type: "gwang", caption: "Crane" }, { type: "ribbon", caption: "Red poem", ribbon: "hong" }, junk, junk],
   },
   {
     num: 2, name: "February · Plum", ko: "매조", note: "Plum blossom & bird", color: "#c62828",
@@ -67,10 +71,19 @@ export const months: Month[] = [
   {
     num: 12, name: "December · Rain", ko: "비", note: "Rain, willow & umbrella man", color: "#46586b",
     cards: [
-      { type: "gwang", caption: "Rain Man 비광" },
+      { type: "gwang", caption: "Rain Man" },
       { type: "animal", caption: "Swallow" },
       { type: "ribbon", caption: "Rain ribbon", ribbon: "plain" },
       doubleJunk,
     ],
   },
 ];
+
+/**
+ * Card art: /cards/MM-N.svg, by Spenĉjo on Wikimedia Commons (CC BY-SA 4.0), credited in the page 1 footer.
+ * N is the card's position within its month, matching the order above.
+ */
+export const months: Month[] = baseMonths.map((m) => ({
+  ...m,
+  cards: m.cards.map((c, i) => ({ ...c, img: `/cards/${String(m.num).padStart(2, "0")}-${i + 1}.svg` })) as Month["cards"],
+}));

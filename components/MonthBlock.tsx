@@ -6,7 +6,7 @@ import { Ko } from "./Sheet";
 export function MonthBlock({ month }: { month: Month }) {
   return (
     <div
-      className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[7pt] pt-[5pt] pb-[6pt]"
+      className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[8pt] pt-[6pt] pb-[5pt]"
       style={{
         // colored cap + soft wash in the month's flower color; an inset shadow keeps the layout height unchanged
         boxShadow: `inset 0 2.5pt 0 ${month.color}`,
@@ -39,7 +39,7 @@ export function MonthBlock({ month }: { month: Month }) {
           <small className="block text-[6.7pt] font-normal text-muted">{month.note}</small>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-[4pt]">
+      <div className="grid grid-cols-4 gap-[5pt]">
         {month.cards.map((card, i) => (
           <HwatuCard key={i} card={card} />
         ))}

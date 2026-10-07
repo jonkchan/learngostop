@@ -27,3 +27,8 @@ Built with Next.js (App Router) and Tailwind CSS v4.
 | `lib/site.ts` | Site URL, title and description used for SEO and the QR code |
 
 The site URL defaults to `https://learngostop.com`; override it with `NEXT_PUBLIC_SITE_URL`.
+
+## Credits
+
+- **Card art** (`public/cards/`): hwatu card illustrations by [Spenĉjo](https://commons.wikimedia.org/wiki/User:Spen%C4%89jo) on [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Hwatu), licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Files are unmodified, only renamed to `MM-N.svg` (month, position).
+- **Month icons** (`public/months/`): by Sem for [Fuda Wiki](https://fudawiki.org/en/meta/copyright), licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Renumbered to hwatu month order (November = paulownia, December = willow).

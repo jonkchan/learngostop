@@ -1,4 +1,4 @@
-import { months } from "@/lib/deck";
+import { months, type Card } from "@/lib/deck";
 import { MiniCard } from "./HwatuCard";
 import { siteUrl } from "@/lib/site";
 import { MonthBlock } from "./MonthBlock";
@@ -6,59 +6,32 @@ import { QrCode } from "./QrCode";
 import { Ko, SectionTitle, Sheet } from "./Sheet";
 
 const types = [
-  { n: 5, t: "Gwang 광", d: "“Bright” cards. Rare and valuable, marked 光.", cls: "bg-gold-soft border-gold" },
-  { n: 9, t: "Animal 열끗", d: "Birds, beasts & objects. Also called yeol (10s).", cls: "bg-tan border-rule" },
-  { n: 10, t: "Ribbon 띠", d: "Poem slips (tti). Red, blue, or plain.", cls: "bg-hred-soft border-[#e7b9b4]" },
-  { n: 24, t: "Junk 피", d: "Pi: plain flower cards. Two of them count double.", cls: "bg-hgreen-soft border-[#c4d3b8]" },
+  { n: 5, t: "Gwang 광", d: "The 5 most valuable cards. Marked 光.", cls: "bg-gold-soft border-gold" },
+  { n: 9, t: "Animal 열끗", d: "Show an animal or object. Marked 열 here.", cls: "bg-tan border-rule" },
+  { n: 10, t: "Ribbon 띠", d: "Have a paper ribbon: red, blue, or plain.", cls: "bg-hred-soft border-[#e7b9b4]" },
+  { n: 24, t: "Junk 피", d: "Just the plant. A few count double (×2).", cls: "bg-hgreen-soft border-[#c4d3b8]" },
 ];
 
-/** One real example of each card type, with the clue that gives it away. */
-const readingGuide = [
-  { type: "Gwang 광", look: "Has the 光 symbol", card: months[0].cards[0], color: "text-[#a06c00]" },
-  { type: "Animal 열끗", look: "Shows a creature or object", card: months[1].cards[0], color: "text-[#7a5418]" },
-  { type: "Ribbon 띠", look: "Has a hanging paper slip", card: months[0].cards[1], color: "text-hred" },
-  { type: "Junk 피", look: "Only plants", card: months[0].cards[2], color: "text-hgreen" },
-];
-
-const trickyCards = [
-  {
-    name: "Sake cup",
-    month: "Sep",
-    card: months[8].cards[0],
-    note: (
-      <>
-        counts as an <b>animal</b> or <b>double junk</b>, your pick. Agree on it first.
-      </>
-    ),
-  },
-  {
-    name: "Rain Man 비광",
-    month: "Dec",
-    card: months[11].cards[0],
-    note: (
-      <>
-        is the weakest gwang: 3 gwang that include it score only <b>2</b>, not 3.
-      </>
-    ),
-  },
-];
-
-const swatch = "inline-block h-[9pt] w-[7pt] flex-none rounded-[1pt]";
-const chip = "inline-block flex-none rounded-[2pt] px-[2pt] text-[5.5pt] leading-[1.5] font-bold text-white";
 const monthAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const sets: { mark: React.ReactNode; ko: string; name: string; meaning: string; months: number[]; note?: string }[] = [
-  { mark: <span className={`${swatch} bg-hred`} />, ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3] },
-  { mark: <span className={`${swatch} bg-hblue`} />, ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10] },
-  { mark: <span className={`${swatch} rib-cho bg-hred`} />, ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7] },
-  { mark: <span className={`${chip} bg-ink`}>G</span>, ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8] },
-  { mark: <span className={`${swatch} rib-plain bg-[#c76b3c]`} />, ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12], note: "no set" },
-  { mark: <span className={`${chip} bg-hgreen`}>×2</span>, ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12], note: "counts as 2" },
+/** months[m - 1].cards[i]: a real card by month number and position. */
+const card = (m: number, i: number) => months[m - 1].cards[i];
+
+/** Laid out 4 across: ribbon sets + the lone rain ribbon on top, birds / animals / double junk / sake cup below. */
+const sets: { cards: Card[]; ko: string; name: string; meaning: string; months: number[]; note?: string }[] = [
+  { cards: [card(1, 1), card(2, 1), card(3, 1)], ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3] },
+  { cards: [card(6, 1), card(9, 1), card(10, 1)], ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10] },
+  { cards: [card(4, 1), card(5, 1), card(7, 1)], ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7] },
+  { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12], note: "no set" },
+  { cards: [card(2, 0), card(4, 0), card(8, 1)], ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8] },
+  { cards: [card(7, 0), card(10, 0), card(6, 0)], ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards · 5+ score" },
+  { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12], note: "×2 each" },
+  { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9], note: "your pick" },
 ];
 
 export function CardsPage() {
   return (
-    <Sheet folio="Go-Stop Guide · Page 1 of 2 · The Cards · Month icons by Sem, Fuda Wiki (CC BY 4.0)">
+    <Sheet folio="Go-Stop Guide · Page 1 of 2 · Art: Spenĉjo (CC BY-SA 4.0) · Icons: Sem (CC BY 4.0)">
       <header className="relative mb-[10pt] border-b-[2pt] border-ink pb-[6pt]">
         <GwangFan />
         <a
@@ -78,7 +51,7 @@ export function CardsPage() {
         </div>
       </header>
 
-      <div className="mb-[7pt] grid grid-cols-[1fr_1.3fr] gap-[20pt] [&_p]:mb-[4pt] [&_b]:font-semibold">
+      <div className="mb-[5pt] grid grid-cols-[1fr_1.3fr] gap-[20pt] [&_p]:mb-[4pt] [&_b]:font-semibold">
         <div>
           <SectionTitle ko="화투의 역사">A Short History</SectionTitle>
           <p>
@@ -91,7 +64,7 @@ export function CardsPage() {
         <div>
           <SectionTitle ko="48장">The Deck</SectionTitle>
           <p>
-            There are 12 months with 4 cards each. <b>Cards match by month</b> (by the flower), not by type. Every card
+            12 months × 4 cards, each month with its own flower. You <b>match cards of the same month</b>. Each card
             is also one of four types:
           </p>
           <div className="grid grid-cols-4 gap-[5pt]">
@@ -107,7 +80,7 @@ export function CardsPage() {
       </div>
 
       <SectionTitle ko="월별 패">Matching Cards by Month</SectionTitle>
-      <div className="grid grid-cols-3 gap-x-[10pt] gap-y-[5pt]">
+      <div className="grid grid-cols-3 gap-x-[12pt] gap-y-[6pt]">
         {months.map((m) => (
           <MonthBlock key={m.num} month={m} />
         ))}
@@ -115,70 +88,37 @@ export function CardsPage() {
 
       <SetLegend />
 
-      <div className="mt-[7pt] grid grid-cols-2 gap-[20pt] [&_b]:font-semibold">
-        <Callout accent="var(--color-hblue)" tint="#e3ecfb">
-          <NoteTitle icon={<InfoIcon />}>Reading the cards</NoteTitle>
-          <ul className="mt-[4.5pt] grid grid-cols-2 gap-x-[8pt] gap-y-[2pt]">
-            {readingGuide.map((g) => (
-              <li key={g.type} className="flex items-center gap-[5pt]">
-                <MiniCard card={g.card} />
-                <span className="leading-[1.15]">
-                  <b className={`block text-[8pt] font-bold ${g.color}`}>{g.type}</b>
-                  <span className="text-[6.6pt] whitespace-nowrap text-muted">{g.look}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Callout>
-        <Callout accent="var(--color-gold)" tint="var(--color-gold-soft)">
-          <NoteTitle icon={<TipIcon />}>Two tricky cards</NoteTitle>
-          <ul className="mt-[4.5pt] grid gap-y-[2pt]">
-            {trickyCards.map((t) => (
-              <li key={t.name} className="flex items-center gap-[5pt]">
-                <MiniCard card={t.card} />
-                <span className="leading-[1.25]">
-                  <b className="font-bold">{t.name}</b> <span className="text-muted">({t.month})</span> {t.note}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Callout>
-      </div>
     </Sheet>
-  );
-}
-
-function Callout({ accent, tint, children }: { accent: string; tint: string; children: React.ReactNode }) {
-  return (
-    <div
-      className="rounded-[3pt] border-[0.75pt] border-l-[3pt] border-rule px-[9pt] py-[4.5pt]"
-      style={{ borderLeftColor: accent, backgroundColor: tint }}
-    >
-      {children}
-    </div>
   );
 }
 
 function SetLegend() {
   return (
-    <div className="relative mt-[7pt] rounded-[4pt] border-[0.75pt] border-rule bg-[#f4eddf] px-[5pt] pt-[7pt] pb-[4pt]">
+    <div className="relative mt-[7pt] rounded-[4pt] border-[0.75pt] border-rule bg-[#f4eddf] px-[6pt] pt-[8pt] pb-[4pt]">
       <span className="absolute -top-[5pt] left-[7pt] rounded-[2pt] bg-hred px-[4pt] text-[6pt] leading-[10pt] font-bold tracking-[0.08em] text-white uppercase shadow-[inset_0_0_0_0.75pt_var(--color-gold)]">
         Legend · Special sets
       </span>
-      <div className="grid grid-cols-3 gap-[3pt] text-[7pt]">
+      <div className="grid grid-cols-4 gap-[4pt] text-[7.4pt]">
         {sets.map((set) => (
-          <div key={set.name} className="flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] border-rule bg-card px-[4pt] py-[1.5pt]">
-            <span className="flex w-[11pt] justify-center">{set.mark}</span>
+          <div key={set.name} className="flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] border-rule bg-card px-[4pt] py-[2pt]">
+            {/* the actual cards in the set, fanned, so they're easy to spot in the grid above */}
+            <span className="flex w-[27pt] flex-none justify-center">
+              {set.cards.map((c, k) => (
+                <span key={k} className={k ? "-ml-[6pt]" : ""}>
+                  <MiniCard card={c} size="h-[18.5pt] w-[11.4pt]" showTag={false} />
+                </span>
+              ))}
+            </span>
             <div className="min-w-0 flex-1">
-              <div className="leading-[1.2] whitespace-nowrap">
-                <Ko className="font-bold">{set.ko}</Ko> <b className="font-semibold">{set.name}</b>{" "}
-                <span className="text-muted">&ldquo;{set.meaning}&rdquo;</span>
+              <div className="leading-[1.15] whitespace-nowrap">
+                <Ko className="font-bold">{set.ko}</Ko> <b className="font-semibold">{set.name}</b>
               </div>
-              <div className="mt-[1.5pt] flex items-center gap-[2pt]">
+              <div className="text-[6.8pt] leading-[1.25] whitespace-nowrap text-muted">&ldquo;{set.meaning}&rdquo;</div>
+              <div className="mt-[1.5pt] flex items-center gap-[2pt] whitespace-nowrap">
                 {set.months.map((m) => (
                   <span
                     key={m}
-                    className="inline-flex items-center gap-[2pt] rounded-full border-[0.6pt] border-rule bg-card py-[0.5pt] pr-[3pt] pl-[0.5pt] text-[6pt] leading-none"
+                    className="inline-flex items-center gap-[2pt] rounded-full border-[0.6pt] border-rule bg-card py-[0.5pt] pr-[3pt] pl-[0.5pt] text-[6.5pt] leading-none"
                   >
                     <span
                       className="grid size-[8pt] place-items-center rounded-full select-none text-[5pt] leading-none font-bold text-white tabular-nums"
@@ -189,7 +129,12 @@ function SetLegend() {
                     {monthAbbr[m - 1]}
                   </span>
                 ))}
-                {set.note && <span className="ml-[2pt] text-[6.3pt] font-semibold text-muted">· {set.note}</span>}
+                {set.note && (
+                  <span className="text-[6.5pt] font-semibold text-muted">
+                    {set.months.length ? "· " : ""}
+                    {set.note}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -217,38 +162,5 @@ function GwangFan() {
         );
       })}
     </div>
-  );
-}
-
-function NoteTitle({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-[4pt] py-[1pt]">
-      {icon}
-      {/* trim the line box to cap height so the icon centers on the letters, not the line */}
-      <b className="[text-box:trim-both_cap_alphabetic]">{children}</b>
-    </div>
-  );
-}
-
-/** "i" in a blue circle: this box is reference info. */
-function InfoIcon() {
-  return (
-    <svg viewBox="0 0 20 20" className="size-[10pt] flex-none" aria-hidden="true">
-      <circle cx="10" cy="10" r="9.5" fill="var(--color-hblue)" />
-      <circle cx="10" cy="5.6" r="1.5" fill="#fff" />
-      <rect x="8.6" y="8.4" width="2.8" height="7.2" rx="1.2" fill="#fff" />
-    </svg>
-  );
-}
-
-/** A lightbulb: this box is a tip. */
-function TipIcon() {
-  return (
-    <svg viewBox="0 0 20 20" className="size-[10pt] flex-none" aria-hidden="true">
-      <circle cx="10" cy="10" r="9.5" fill="#a06c00" />
-      <path d="M10 3.6a4.3 4.3 0 0 0-2.6 7.7c.5.4.8.9.8 1.5v.6h3.6v-.6c0-.6.3-1.1.8-1.5A4.3 4.3 0 0 0 10 3.6Z" fill="#fff" />
-      <rect x="8.2" y="14.2" width="3.6" height="1.3" rx=".6" fill="#fff" />
-      <rect x="8.7" y="16" width="2.6" height="1.1" rx=".5" fill="#fff" />
-    </svg>
   );
 }
