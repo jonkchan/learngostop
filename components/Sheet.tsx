@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { GoStopRow } from "./GoStopDemo";
 import { PlayDemoRow } from "./PlayDemo";
 
 /** One US Letter page. Content is clipped to the sheet so printing always yields exactly one page. */
@@ -52,13 +53,16 @@ export function Ko({ className = "", children }: { className?: string; children:
 export function Terms({
   items,
   demos = false,
+  rowY = "py-[1pt]",
 }: {
-  items: { term: string; ko: string; def: ReactNode }[];
+  /** `scenario`: a Go/Stop demo scenario key; the row opens it (penalties). */
+  items: { term: string; ko: string; def: ReactNode; scenario?: string }[];
   /** Make each row open an animated demo of that play (Special Plays). */
   demos?: boolean;
+  /** Vertical padding per row; Special Plays uses a little more so it ends level with the right column. */
+  rowY?: string;
 }) {
-  const rowClass =
-    "col-span-2 -mx-[3pt] grid grid-cols-subgrid gap-x-[7pt] rounded-[2pt] px-[3pt] py-[1pt] odd:bg-[#f1e9da]";
+  const rowClass = `col-span-2 -mx-[3pt] grid grid-cols-subgrid gap-x-[7pt] rounded-[2pt] px-[3pt] ${rowY} odd:bg-[#f1e9da]`;
   return (
     <dl className="grid grid-cols-[auto_1fr]">
       {items.map((t) => {
@@ -68,6 +72,19 @@ export function Terms({
             {t.term} <Ko className="ml-[2pt] font-bold text-hred">{t.ko}</Ko>
           </>
         );
+        if (t.scenario)
+          return (
+            <GoStopRow
+              key={t.term}
+              scenario={t.scenario}
+              label={`Watch how ${t.term} plays out`}
+              className={`${rowClass} hover:bg-gold-soft`}
+              hintPos="-left-[8pt]"
+              termClassName={termClass}
+              term={term}
+              def={t.def}
+            />
+          );
         return demos ? (
           <PlayDemoRow key={t.term} play={t.term} className={rowClass} termClassName={termClass} term={term} def={t.def} />
         ) : (

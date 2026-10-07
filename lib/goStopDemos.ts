@@ -15,9 +15,19 @@ export type GoStopFrame = {
   pay?: Record<Player, number>;
   /** A short label for how the hand ended (shown over the table). */
   ending?: string;
+  /** A small count under each player's points, e.g. "4 junk" (penalty scenarios). */
+  notes?: Partial<Record<Player, string>>;
+  /** Players to outline in red: whoever a penalty hits. */
+  flag?: Player[];
 };
 
-export type GoStopScenario = { key: string; label: string; frames: GoStopFrame[] };
+export type GoStopScenario = {
+  key: string;
+  label: string;
+  /** Which dialog it belongs to: the Go / Stop endings, or the penalties for losers. */
+  group: "gostop" | "penalty";
+  frames: GoStopFrame[];
+};
 
 const pts = (you: number, b = 1, c = 2): Record<Player, number> => ({ you, b, c });
 
@@ -25,6 +35,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "stop",
     label: "Stop at 3",
+    group: "gostop",
     frames: [
       { caption: "Everyone is capturing cards. You have 2 points.", points: pts(2), goes: 0 },
       { caption: "You reach 3 points, the target. Time to choose: Go or Stop?", points: pts(3), goes: 0 },
@@ -35,6 +46,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "go1",
     label: "Go once",
+    group: "gostop",
     frames: [
       { caption: "You reach 3 points.", points: pts(3), goes: 0 },
       { caption: "You call Go: the hand keeps going, for a bigger payout.", points: pts(3), goes: 1, call: { who: "you", what: "GO" } },
@@ -46,6 +58,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "go2",
     label: "Go twice",
+    group: "gostop",
     frames: [
       { caption: "You reach 3 points and call Go.", points: pts(3), goes: 1, call: { who: "you", what: "GO" } },
       { caption: "Your cards reach 4. You push your luck and call Go again.", points: pts(4), goes: 2, call: { who: "you", what: "GO" } },
@@ -56,6 +69,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "go3",
     label: "Go three times",
+    group: "gostop",
     frames: [
       { caption: "You reach 3 points and call Go.", points: pts(3), goes: 1, call: { who: "you", what: "GO" } },
       { caption: "At 4, Go again.", points: pts(4), goes: 2, call: { who: "you", what: "GO" } },
@@ -67,6 +81,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "gobak",
     label: "Go-bak",
+    group: "gostop",
     frames: [
       { caption: "You reach 3 points and call Go.", points: pts(3), goes: 1, call: { who: "you", what: "GO" } },
       { caption: "Before your score goes up again, Player B catches up to 3 points…", points: pts(3, 3), goes: 1 },
@@ -83,6 +98,7 @@ export const goStopScenarios: GoStopScenario[] = [
   {
     key: "nagari",
     label: "Nagari",
+    group: "gostop",
     frames: [
       { caption: "You reach 3 points and call Go.", points: pts(3), goes: 1, call: { who: "you", what: "GO" } },
       { caption: "Nobody's score goes up for the rest of the hand…", points: pts(3), goes: 1 },
@@ -93,6 +109,96 @@ export const goStopScenarios: GoStopScenario[] = [
         goes: 1,
         pay: { you: 0, b: 0, c: 0 },
         ending: "Draw · next hand ×2",
+      },
+    ],
+  },
+  {
+    key: "pibak",
+    label: "Pi-bak",
+    group: "penalty",
+    frames: [
+      {
+        caption: "You win the hand with 5 points. 3 of them come from junk cards: you captured 12.",
+        points: pts(5),
+        goes: 0,
+        call: { who: "you", what: "STOP" },
+        notes: { you: "12 junk", b: "4 junk", c: "8 junk" },
+      },
+      {
+        caption: "Player B has only 4 junk, fewer than 6. That's Pi-bak: B pays double.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "12 junk", b: "4 junk", c: "8 junk" },
+        flag: ["b"],
+      },
+      {
+        caption: "B pays 5 × 2 = 10. C has 8 junk, so C pays the normal 5.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "12 junk", b: "4 junk", c: "8 junk" },
+        flag: ["b"],
+        pay: { you: 15, b: -10, c: -5 },
+        ending: "Pi-bak: B pays ×2",
+      },
+    ],
+  },
+  {
+    key: "gwangbak",
+    label: "Gwang-bak",
+    group: "penalty",
+    frames: [
+      {
+        caption: "You win with 5 points, and 3 of them come from gwang (Sam-gwang).",
+        points: pts(5),
+        goes: 0,
+        call: { who: "you", what: "STOP" },
+        notes: { you: "3 gwang", b: "0 gwang", c: "1 gwang" },
+      },
+      {
+        caption: "Player B didn't capture a single gwang. That's Gwang-bak: B pays double.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "3 gwang", b: "0 gwang", c: "1 gwang" },
+        flag: ["b"],
+      },
+      {
+        caption: "B pays 5 × 2 = 10. C has a gwang, so C pays the normal 5.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "3 gwang", b: "0 gwang", c: "1 gwang" },
+        flag: ["b"],
+        pay: { you: 15, b: -10, c: -5 },
+        ending: "Gwang-bak: B pays ×2",
+      },
+    ],
+  },
+  {
+    key: "meongtta",
+    label: "Meong-tta",
+    group: "penalty",
+    frames: [
+      {
+        caption: "You win with 5 points, and you captured 7 animals.",
+        points: pts(5),
+        goes: 0,
+        call: { who: "you", what: "STOP" },
+        notes: { you: "7 animals", b: "2 animals", c: "0 animals" },
+      },
+      {
+        caption: "7 or more animals is Meong-tta. This one hits everyone, no matter what they hold.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "7 animals", b: "2 animals", c: "0 animals" },
+        flag: ["b", "c"],
+      },
+      {
+        caption: "Both opponents pay 5 × 2 = 10.",
+        points: pts(5),
+        goes: 0,
+        notes: { you: "7 animals", b: "2 animals", c: "0 animals" },
+        flag: ["b", "c"],
+        pay: { you: 20, b: -10, c: -10 },
+        ending: "Meong-tta: everyone ×2",
       },
     ],
   },

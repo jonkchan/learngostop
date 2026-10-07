@@ -3,6 +3,7 @@ import { FitToScreen } from "@/components/FitToScreen";
 import { FloatingActions } from "@/components/FloatingActions";
 import { HighlightProvider } from "@/components/Highlight";
 import { RulesPage } from "@/components/RulesPage";
+import { SpeakKorean } from "@/components/SpeakKorean";
 import { WelcomeTour } from "@/components/WelcomeTour";
 import { siteDescription, siteName, siteTitle, siteUrl } from "@/lib/site";
 
@@ -40,6 +41,7 @@ export default function Home() {
       <FloatingActions />
       <FitToScreen />
       <WelcomeTour />
+      <SpeakKorean />
     </main>
   );
 }

@@ -111,3 +111,23 @@ body {
     zoom: 1;
   }
 }
+
+/* Tap-to-hear Korean (components/SpeakKorean.tsx): only when the device has a Korean voice */
+@media screen {
+  html.speak-ko [lang="ko"] {
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color 0.15s;
+  }
+  @media (hover: hover) {
+    html.speak-ko [lang="ko"]:hover {
+      text-decoration: underline dotted;
+      text-underline-offset: 0.18em;
+      text-decoration-thickness: 1px;
+    }
+  }
+  html.speak-ko [lang="ko"].ko-speaking {
+    background-color: var(--color-gold-soft);
+    box-shadow: 0 0 0 2px var(--color-gold-soft);
+  }
+}

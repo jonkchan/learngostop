@@ -40,9 +40,9 @@ const specialPlays = [
 ];
 
 const penalties = [
-  { term: "Pi-bak", ko: "피박", def: "The winner scored with junk and you have fewer than 6 junk." },
-  { term: "Gwang-bak", ko: "광박", def: "Winner scored with gwang; you have none." },
-  { term: "Meong-tta", ko: "멍따", def: "Winner has 7+ animals: everyone pays ×2." },
+  { term: "Pi-bak", ko: "피박", def: "The winner scored with junk and you have fewer than 6 junk.", scenario: "pibak" },
+  { term: "Gwang-bak", ko: "광박", def: "Winner scored with gwang; you have none.", scenario: "gwangbak" },
+  { term: "Meong-tta", ko: "멍따", def: "Winner has 7+ animals: everyone pays ×2.", scenario: "meongtta" },
 ];
 
 type Row = { name: string; ko?: string; dot?: string; need: ReactNode; pts: string; cards: string[] };
@@ -229,7 +229,7 @@ export function RulesPage() {
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
           <div data-tour="plays">
-            <Terms items={specialPlays} demos />
+            <Terms items={specialPlays} demos rowY="py-[1.65pt]" />
           </div>
         </div>
 
@@ -322,8 +322,12 @@ export function RulesPage() {
             Penalties for losers <span className="font-medium text-muted">박 · loser pays ×2</span>
           </h3>
           <Terms items={penalties} />
+          <p className="mt-[2pt] text-[7.4pt] text-muted">
+            <b className="text-ink">Penalties stack:</b> Pi-bak + Gwang-bak = <b className="text-ink">×4</b>, on top of
+            any Go bonus.
+          </p>
 
-          <div className="mt-[9pt] flex items-center gap-[6pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
+          <div className="mt-[7pt] flex items-center gap-[6pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
             <CalculatorIcon />
             <p>
               <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}

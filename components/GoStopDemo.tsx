@@ -52,6 +52,8 @@ export function GoStopRow({
   termClassName,
   term,
   def,
+  className = "col-span-2 -mx-[3pt] grid grid-cols-subgrid rounded-[2pt] px-[3pt] hover:bg-[#f9dcd8]",
+  hintPos = "-left-[16.5pt]",
 }: {
   /** A goStopScenarios key, e.g. "gobak". */
   scenario: string;
@@ -59,21 +61,24 @@ export function GoStopRow({
   termClassName: string;
   term: ReactNode;
   def: ReactNode;
+  /** Row layout and hover color (defaults suit the Watch out box). */
+  className?: string;
+  /** Left offset of the ▶, so it lands in the column gutter. */
+  hintPos?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const initial = Math.max(0, goStopScenarios.findIndex((s) => s.key === scenario));
   return (
     <>
       <div
         title="Watch how it plays out"
         onClick={() => setOpen(true)}
-        className="group relative col-span-2 -mx-[3pt] grid grid-cols-subgrid rounded-[2pt] px-[3pt] cursor-pointer transition-colors hover:bg-[#f9dcd8] has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent"
+        className={`${className} group relative cursor-pointer transition-colors has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent`}
       >
         <dt className={termClassName}>
           <button
             type="button"
             aria-label={label}
-            className="open-btn absolute top-[1pt] -left-[16.5pt] grid size-[9pt] cursor-pointer select-none place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
+            className={`open-btn absolute top-[1pt] ${hintPos} grid size-[9pt] cursor-pointer select-none place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden`}
           >
             <svg aria-hidden="true" viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
               <path d="M2 1l7 4-7 4z" />
@@ -85,7 +90,7 @@ export function GoStopRow({
       </div>
       {open && (
         <ViewportOverlay>
-          <GoStopDialog initial={initial} only onClose={() => setOpen(false)} />
+          <GoStopDialog initialKey={scenario} only onClose={() => setOpen(false)} />
         </ViewportOverlay>
       )}
     </>
@@ -100,24 +105,26 @@ const players: { id: Player; name: string }[] = [
 
 function GoStopDialog({
   onClose,
-  initial = 0,
+  initialKey,
   only = false,
 }: {
   onClose: () => void;
-  /** Scenario to open on. */
-  initial?: number;
+  /** Scenario to open on; its group (Go/Stop endings or penalties) decides which tabs show. */
+  initialKey?: string;
   /** Opened for one scenario (from a Watch out row): autoplay stops at its end instead of moving on. */
   only?: boolean;
 }) {
-  const [scenario, setScenario] = useState(initial);
+  const group = goStopScenarios.find((s) => s.key === initialKey)?.group ?? "gostop";
+  const list = goStopScenarios.filter((s) => s.group === group);
+  const [scenario, setScenario] = useState(() => Math.max(0, list.findIndex((s) => s.key === initialKey)));
   const [frame, setFrame] = useState(0);
   const [autoplay, setAutoplay] = useState(readAutoplay);
-  const sc = goStopScenarios[scenario];
+  const sc = list[scenario];
   const last = sc.frames.length - 1;
   const f = sc.frames[frame];
 
   // auto-advance; at the end of a scenario, pause a beat and move on to the next one
-  const running = autoplay && (frame < last || (!only && scenario < goStopScenarios.length - 1));
+  const running = autoplay && (frame < last || (!only && scenario < list.length - 1));
   useEffect(() => {
     if (!running) return;
     const t = setTimeout(
@@ -152,7 +159,7 @@ function GoStopDialog({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Go or Stop: every scenario"
+      aria-label={group === "penalty" ? "Penalties for losers" : "Go or Stop: every scenario"}
       onClick={onClose}
       className="absolute inset-0 grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/60 p-[16px] backdrop-blur-[2px] print:hidden"
     >
@@ -160,7 +167,10 @@ function GoStopDialog({
         <div className="max-h-[calc(100dvh-32px)] overflow-x-hidden overflow-y-auto rounded-[16px] bg-paper px-[18px] pt-[16px] pb-[16px] shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_0_0_3px_var(--color-hred)]">
           <div className="mb-[10px] flex items-center justify-between gap-[12px] pr-[18px]">
             <div className="font-serif text-[20px] font-black text-hred">
-              Go or Stop? <span className="text-[15px] font-medium whitespace-nowrap text-muted">고 / 스톱</span>
+              {group === "penalty" ? "Penalties" : "Go or Stop?"}{" "}
+              <span lang="ko" className="text-[15px] font-medium whitespace-nowrap text-muted">
+                {group === "penalty" ? "박" : "고 / 스톱"}
+              </span>
             </div>
             <AutoplaySwitch
               on={autoplay}
@@ -173,7 +183,7 @@ function GoStopDialog({
 
           {/* scenario tabs */}
           <div className="-mx-[2px] mb-[12px] flex flex-wrap gap-[6px] px-[2px] pb-[2px]" role="tablist">
-            {goStopScenarios.map((s, i) => (
+            {list.map((s, i) => (
               <button
                 key={s.key}
                 type="button"
@@ -201,7 +211,7 @@ function GoStopDialog({
                   <div
                     key={p.id}
                     className={`relative flex flex-col items-center rounded-[10px] bg-card px-[6px] pt-[10px] pb-[12px] shadow-[0_2px_6px_rgba(0,0,0,0.12)] ${
-                      p.id === "you" ? "ring-[2px] ring-gold" : ""
+                      f.flag?.includes(p.id) ? "ring-[2.5px] ring-hred" : p.id === "you" ? "ring-[2px] ring-gold" : ""
                     }`}
                   >
                     <div className="text-[12px] font-bold tracking-[0.05em] text-[#7a5418] uppercase">{p.name}</div>
@@ -212,6 +222,15 @@ function GoStopDialog({
                       {f.points[p.id]}
                     </div>
                     <div className="text-[11px] text-muted">points</div>
+                    {f.notes?.[p.id] && (
+                      <div
+                        className={`mt-[4px] rounded-full px-[7px] text-[11px] leading-[18px] font-bold ${
+                          f.flag?.includes(p.id) ? "bg-hred-soft text-hred" : "bg-[#efe6d6] text-ink"
+                        }`}
+                      >
+                        {f.notes[p.id]}
+                      </div>
+                    )}
                     {/* your Go badges */}
                     {p.id === "you" && (
                       <div className="mt-[6px] flex h-[20px] gap-[4px]">
