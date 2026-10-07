@@ -11,7 +11,8 @@ const steps: ReactNode[] = [
     <b>Flip the top card of the draw pile.</b> If it matches a table card, put them together the same way.
   </>,
   <>
-    <b>Capture every pair you made.</b> Keep them face-up in front of you, sorted by type (see below).
+    <b>Claim your pairs off the table</b> and keep them face-up <b>in front of you</b>, sorted by type (see
+    below).
   </>,
   <>
     <b>Two of your month on the table?</b> Pick one to capture; the other stays. <b>Three?</b> Take all four
@@ -138,8 +139,8 @@ export function RulesPage() {
             <thead>
               <tr>
                 <th></th>
-                {["1st pass", "2nd pass", "You end up with"].map((g) => (
-                  <th key={g} colSpan={g === "You end up with" ? 3 : 2} className={groupTh}>
+                {["1st pass", "2nd pass", "After the deal"].map((g) => (
+                  <th key={g} colSpan={g === "After the deal" ? 3 : 2} className={groupTh}>
                     {g}
                   </th>
                 ))}
@@ -156,7 +157,11 @@ export function RulesPage() {
                     Table
                   </th>,
                 ])}
-                <th className={`${thNum} border-l-[0.6pt] border-l-rule`}>Hand</th>
+                <th className={`${thNum} border-l-[0.6pt] border-l-rule`}>
+                  Each
+                  <br />
+                  hand
+                </th>
                 <th className={thNum}>Table</th>
                 <th className={thNum}>Pile</th>
               </tr>
@@ -181,7 +186,7 @@ export function RulesPage() {
             </tbody>
           </table>
           <p className="mb-[4pt] text-[7.4pt]">
-            Hands face-down, table face-up. The <b>dealer is dealt last but plays first</b>, then turns go
+            Deal hands face-down, table face-up. The <b>dealer is dealt last but plays first</b>, then turns go
             counter-clockwise. The last hand&rsquo;s winner deals next.
           </p>
 

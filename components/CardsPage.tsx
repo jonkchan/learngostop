@@ -22,11 +22,11 @@ const sets: { cards: Card[]; ko: string; name: string; meaning: string; months: 
   { cards: [card(1, 1), card(2, 1), card(3, 1)], ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3] },
   { cards: [card(6, 1), card(9, 1), card(10, 1)], ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10] },
   { cards: [card(4, 1), card(5, 1), card(7, 1)], ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7] },
-  { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12], note: "no set" },
+  { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12] },
   { cards: [card(2, 0), card(4, 0), card(8, 1)], ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8] },
-  { cards: [card(7, 0), card(10, 0), card(6, 0)], ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards · 5+ score" },
-  { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12], note: "×2 each" },
-  { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9], note: "your pick" },
+  { cards: [card(7, 0), card(10, 0), card(6, 0)], ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards" },
+  { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12] },
+  { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9] },
 ];
 
 export function CardsPage() {
@@ -96,7 +96,7 @@ function SetLegend() {
   return (
     <div className="relative mt-[7pt] rounded-[4pt] border-[0.75pt] border-rule bg-[#f4eddf] px-[6pt] pt-[8pt] pb-[4pt]">
       <span className="absolute -top-[5pt] left-[7pt] rounded-[2pt] bg-hred px-[4pt] text-[6pt] leading-[10pt] font-bold tracking-[0.08em] text-white uppercase shadow-[inset_0_0_0_0.75pt_var(--color-gold)]">
-        Legend · Special sets
+        Legend
       </span>
       <div className="grid grid-cols-4 gap-[4pt] text-[7.4pt]">
         {sets.map((set) => (
