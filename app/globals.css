@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-paper: #fff9ef;
+  --color-ink: #1d1a17;
+  --color-muted: #6b635a;
+  --color-rule: #d9cfbf;
+  --color-card: #fffdf8;
+  --color-hred: #c8102e;
+  --color-hred-soft: #fcd9d6;
+  --color-hblue: #1c55c0;
+  --color-gold: #f2b822;
+  --color-gold-soft: #ffeaa8;
+  --color-hgreen: #2f7a3a;
+  --color-hgreen-soft: #dcefcf;
+  --color-tan: #f6e1bb;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter), "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif-kr), "Apple SD Gothic Neo", Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Ribbon stripe patterns (hard to express as utilities) */
+.rib-cho {
+  background-image: repeating-linear-gradient(0deg, transparent 0 4pt, rgb(255 255 255 / 0.35) 4pt 5pt);
+}
+.rib-plain {
+  background-image: repeating-linear-gradient(135deg, transparent 0 3pt, rgb(0 0 0 / 0.18) 3pt 4.5pt);
+}
+
+/* Shrink the letter-size sheets to fit narrow screens */
+@media screen and (max-width: 860px) {
+  body {
+    zoom: calc(100vw / 8.9in);
+  }
+}
+
+@page {
+  size: letter;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: none;
+    zoom: 1;
+  }
 }
