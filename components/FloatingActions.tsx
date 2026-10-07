@@ -5,7 +5,12 @@ import { siteTitle, siteUrl } from "@/lib/site";
 import { ScoreCalculator } from "./ScoreCalculator";
 import { TOUR_EVENT } from "./WelcomeTour";
 
-/** The floating Tour, Calculator, Share and Print buttons in the bottom-right corner (screen only). */
+const MINIMIZED_KEY = "learngostop:actions-minimized";
+
+/**
+ * The floating Tour, Calculator, Share and Print buttons in the bottom-right corner (screen only).
+ * A small chevron tucks them away into a tab at the screen edge; remembered per browser.
+ */
 export function FloatingActions() {
   // On phones the buttons tuck away while scrolling down and return on scroll-up or at the top.
   const [hidden, setHidden] = useState(false);
@@ -13,6 +18,32 @@ export function FloatingActions() {
   const [zoomed, setZoomed] = useState(false);
   const lastY = useRef(0);
   const [calcOpen, setCalcOpen] = useState(false);
+  const [minimized, setMinimized] = useState(false);
+  const tabRef = useRef<HTMLButtonElement>(null);
+  const hideRef = useRef<HTMLButtonElement>(null);
+
+  // restore the saved choice after hydration (the server always renders the buttons shown)
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        setMinimized(localStorage.getItem(MINIMIZED_KEY) === "1");
+      } catch {
+        // storage blocked: just start shown
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const minimize = (v: boolean) => {
+    setMinimized(v);
+    try {
+      localStorage.setItem(MINIMIZED_KEY, v ? "1" : "0");
+    } catch {
+      // storage blocked: works for this visit only
+    }
+    // keep keyboard focus on whichever control is now visible
+    setTimeout(() => (v ? tabRef : hideRef).current?.focus({ preventScroll: true }), 320);
+  };
 
   useEffect(() => {
     const vv = window.visualViewport;
@@ -37,27 +68,60 @@ export function FloatingActions() {
   }, []);
 
   return (
-    <div
-      className={`fixed right-[18px] bottom-[18px] flex items-center gap-[10px] transition-[translate,opacity] duration-300 max-sm:right-[16px] max-sm:bottom-[16px] max-sm:flex-col max-sm:gap-[10px] print:hidden ${
-        zoomed
-          ? "pointer-events-none translate-y-[120%] opacity-0"
-          : hidden
-            ? "max-sm:pointer-events-none max-sm:translate-y-[120%] max-sm:opacity-0"
-            : ""
-      }`}
-    >
-      <ActionButton
-        label="Tour"
-        tip="Take the tour"
-        icon={<HelpIcon />}
-        onClick={() => window.dispatchEvent(new Event(TOUR_EVENT))}
-        small
-      />
-      <ActionButton label="Calculator" tip="Score calculator" icon={<CalculatorIcon />} onClick={() => setCalcOpen(true)} small />
-      <ShareButton />
-      <ActionButton label="Print" icon={<PrinterIcon />} onClick={() => window.print()} primary />
+    <>
+      <div
+        inert={minimized}
+        className={`fixed right-[18px] bottom-[18px] flex items-center gap-[10px] transition-[translate,opacity] duration-300 max-sm:right-[16px] max-sm:bottom-[16px] max-sm:flex-col max-sm:gap-[10px] print:hidden ${
+          minimized
+            ? "pointer-events-none translate-x-[calc(100%+24px)] opacity-0"
+            : zoomed
+              ? "pointer-events-none translate-y-[120%] opacity-0"
+              : hidden
+                ? "max-sm:pointer-events-none max-sm:translate-y-[120%] max-sm:opacity-0"
+                : ""
+        }`}
+      >
+        <ActionButton
+          label="Tour"
+          tip="Take the tour"
+          icon={<HelpIcon />}
+          onClick={() => window.dispatchEvent(new Event(TOUR_EVENT))}
+          small
+        />
+        <ActionButton label="Calculator" tip="Score calculator" icon={<CalculatorIcon />} onClick={() => setCalcOpen(true)} small />
+        <ShareButton />
+        <ActionButton label="Print" icon={<PrinterIcon />} onClick={() => window.print()} primary />
+        <button
+          ref={hideRef}
+          type="button"
+          onClick={() => minimize(true)}
+          aria-label="Hide these buttons"
+          title="Hide buttons"
+          className="grid size-[26px] cursor-pointer place-items-center rounded-full bg-paper/90 text-muted shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-colors hover:text-ink max-sm:size-[30px] max-sm:rotate-90"
+        >
+          <svg viewBox="0 0 24 24" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+      {/* the tab at the screen edge that brings them back */}
+      <button
+        ref={tabRef}
+        type="button"
+        onClick={() => minimize(false)}
+        aria-label="Show the Tour, Calculator, Share and Print buttons"
+        title="Show buttons"
+        tabIndex={minimized ? 0 : -1}
+        className={`fixed right-0 bottom-[28px] grid h-[48px] w-[22px] cursor-pointer place-items-center rounded-l-[12px] bg-paper text-ink shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-[translate,opacity] duration-300 hover:w-[26px] print:hidden ${
+          minimized && !zoomed ? "" : "pointer-events-none translate-x-full opacity-0"
+        }`}
+      >
+        <svg viewBox="0 0 24 24" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="m15 6-6 6 6 6" />
+        </svg>
+      </button>
       <ScoreCalculator open={calcOpen} onClose={() => setCalcOpen(false)} />
-    </div>
+    </>
   );
 }
 
