@@ -57,7 +57,7 @@ export function MonthZoom({
             setOpen(num);
           }
         }}
-        className={`${className} cursor-zoom-in transition-shadow hover:ring-[1.5pt] hover:ring-gold focus-visible:outline-[1.5pt] focus-visible:outline-gold print:ring-0`}
+        className={`${className} cursor-zoom-in transition-shadow duration-200 [box-shadow:var(--cap)] hover:[box-shadow:var(--cap),0_0_0_1.5pt_var(--color-gold),0_6pt_16pt_rgba(0,0,0,0.18)] focus-visible:outline-[1.5pt] focus-visible:outline-gold print:[box-shadow:var(--cap)]`}
         style={style}
       >
         {children}

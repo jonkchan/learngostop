@@ -11,10 +11,11 @@ export function MonthBlock({ month }: { month: Month }) {
       num={month.num}
       className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[8pt] pt-[6pt] pb-[5pt]"
       style={{
-        // colored cap + soft wash in the month's flower color; an inset shadow keeps the layout height unchanged
-        boxShadow: `inset 0 2.5pt 0 ${month.color}`,
+        // colored cap + soft wash in the month's flower color; an inset shadow keeps the layout height unchanged.
+        // Passed as a variable so MonthZoom can add its hover outline and shadow on top.
+        "--cap": `inset 0 2.5pt 0 ${month.color}`,
         backgroundImage: `linear-gradient(to bottom, ${month.color}22, transparent 45%)`,
-      }}
+      } as React.CSSProperties}
     >
       <div className="mb-[5pt] flex items-center gap-[6pt]">
         {/* flower icon (Sem, Fuda Wiki, CC BY 4.0) with the month number as a corner badge */}

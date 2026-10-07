@@ -28,7 +28,7 @@ const steps: ReactNode[] = [
 ];
 
 const specialPlays = [
-  { term: "Ppeok", ko: "뻑", def: <>You match, then flip the <b>same month</b>: all 3 stay stuck. Whoever captures them, each opponent gives them 1 junk (<b>2</b> if it&rsquo;s their own pile, 자뻑).</> },
+  { term: "Ppeok", ko: "뻑", def: <>You match, then flip the <b>same month</b>: all 3 stay stuck. Whoever captures them later gets 1 junk from each opponent, or <b>2</b> if they originally got the pile stuck (자뻑).</> },
   { term: "Jjok", ko: "쪽", def: "No match, but the flip matches your card: take both; each opponent gives you 1 junk." },
   { term: "Ttadak", ko: "따닥", def: "Play the 3rd of a month, flip the 4th: take all 4; each opponent gives you 1 junk." },
   { term: "Sseul", ko: "쓸", def: "You clear the table. Each opponent gives you 1 junk." },

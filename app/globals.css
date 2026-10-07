@@ -52,6 +52,26 @@ body {
   }
 }
 
+/* Cards dealt into the enlarged example, one after another */
+@keyframes deal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.deal-in {
+  animation: deal-in 380ms cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .deal-in {
+    animation: none;
+  }
+}
+
 @page {
   size: letter;
   margin: 0;
