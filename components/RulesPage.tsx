@@ -229,7 +229,7 @@ export function RulesPage() {
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
           <div data-tour="plays">
-            <Terms items={specialPlays} demos rowY="py-[1.65pt]" />
+            <Terms items={specialPlays} demos rowY="py-[1.3pt]" />
           </div>
         </div>
 
@@ -271,13 +271,28 @@ export function RulesPage() {
               The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
             </div>
           </GoStopDemoTrigger>
-          <div className="mb-[6pt] grid grid-cols-5 gap-[3pt] select-none">
-            {goLadder.map(([label, effect]) => (
-              <div key={label} className="rounded-[3pt] border-[0.75pt] border-rule bg-card py-[2pt] text-center">
-                <b className="block text-[6.8pt] font-semibold text-muted">{label}</b>
-                <span className="font-serif text-[10pt] font-black text-hred">{effect}</span>
-              </div>
-            ))}
+          {/* the Go ladder and a worked example of it, in one panel; the example uses the 1 Go step */}
+          <div className="mb-[6pt] rounded-[4pt] border-[0.75pt] border-gold bg-gold-soft p-[3.5pt]">
+            <div className="grid grid-cols-5 gap-[3pt] select-none">
+              {goLadder.map(([label, effect], i) => (
+                <div
+                  key={label}
+                  className={`rounded-[3pt] border-[0.75pt] bg-card py-[2pt] text-center ${
+                    i === 0 ? "border-hred shadow-[inset_0_0_0_0.5pt_var(--color-hred)]" : "border-rule"
+                  }`}
+                >
+                  <b className="block text-[6.8pt] font-semibold text-muted">{label}</b>
+                  <span className="font-serif text-[10pt] font-black text-hred">{effect}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-[3.5pt] flex items-center gap-[6pt] px-[3pt] text-[7.6pt]">
+              <CalculatorIcon />
+              <p>
+                <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}
+                <b>Stop</b>: 4 + 1 (for the Go) = <b>5 pts</b>.
+              </p>
+            </div>
           </div>
           <div className="mb-[5pt] rounded-[4pt] border-[0.75pt] border-l-[2.5pt] border-[#efb3ae] border-l-hred bg-[#fdeeec] px-[6pt] pt-[3pt] pb-[3.5pt] text-[7.4pt]">
             <div className="mb-[2pt] flex items-center gap-[4pt] text-[6.8pt] font-black tracking-[0.06em] text-hred uppercase">
@@ -328,14 +343,6 @@ export function RulesPage() {
             <b className="text-ink">Penalties stack:</b> Pi-bak + Gwang-bak = <b className="text-ink">×4</b>, on top of
             any Go bonus.
           </p>
-
-          <div className="mt-[7pt] flex items-center gap-[6pt] rounded-[3pt] border-[0.75pt] border-gold bg-gold-soft px-[7pt] py-[5pt] text-[7.6pt]">
-            <CalculatorIcon />
-            <p>
-              <b>Example:</b> You hit 3 pts and call <b>Go</b>. Your cards reach 4, so you choose again and{" "}
-              <b>Stop</b>: 4 + 1 (for the Go) = <b>5 pts</b>.
-            </p>
-          </div>
         </div>
       </div>
     </Sheet>
