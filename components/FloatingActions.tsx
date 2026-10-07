@@ -2,15 +2,17 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { siteTitle, siteUrl } from "@/lib/site";
+import { ScoreCalculator } from "./ScoreCalculator";
 import { TOUR_EVENT } from "./WelcomeTour";
 
-/** The floating Tour, Share and Print buttons in the bottom-right corner (screen only). */
+/** The floating Tour, Calculator, Share and Print buttons in the bottom-right corner (screen only). */
 export function FloatingActions() {
   // On phones the buttons tuck away while scrolling down and return on scroll-up or at the top.
   const [hidden, setHidden] = useState(false);
   // Hidden on every screen size while the page is pinch-zoomed, so the buttons don't cover the zoomed-in text.
   const [zoomed, setZoomed] = useState(false);
   const lastY = useRef(0);
+  const [calcOpen, setCalcOpen] = useState(false);
 
   useEffect(() => {
     const vv = window.visualViewport;
@@ -51,8 +53,10 @@ export function FloatingActions() {
         onClick={() => window.dispatchEvent(new Event(TOUR_EVENT))}
         small
       />
+      <ActionButton label="Calculator" tip="Score calculator" icon={<CalculatorIcon />} onClick={() => setCalcOpen(true)} small />
       <ShareButton />
       <ActionButton label="Print" icon={<PrinterIcon />} onClick={() => window.print()} primary />
+      <ScoreCalculator open={calcOpen} onClose={() => setCalcOpen(false)} />
     </div>
   );
 }
@@ -154,6 +158,17 @@ function PrinterIcon() {
       <path d="M6 9V2h12v7" />
       <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
       <rect x="6" y="14" width="12" height="8" rx="1" />
+    </svg>
+  );
+}
+
+/** A pocket calculator: screen and a grid of keys. */
+function CalculatorIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M8 6h8" />
+      <path d="M8 11h.01M12 11h.01M16 11h.01M8 14.5h.01M12 14.5h.01M16 14.5h.01M8 18h.01M12 18h.01M16 18h.01" />
     </svg>
   );
 }

@@ -48,7 +48,7 @@ const steps: Step[] = [
   },
   {
     title: "You're all set",
-    body: "Print gives you an offline-friendly copy for the table: the same guide on exactly 2 pages, no screen needed. Or share the link with your players. The ? button in the corner brings this tour back anytime.",
+    body: "Print gives you an offline-friendly copy for the table: the same guide on exactly 2 pages, no screen needed. Or share the link with your players. In the corner, the calculator adds up a winning hand, and ? brings this tour back.",
   },
 ];
 
