@@ -6,20 +6,20 @@ import { Ko, SectionTitle, Sheet, Terms } from "./Sheet";
 
 const steps: ReactNode[] = [
   <>
-    <b>Play a card from your hand.</b> If it matches a table card&rsquo;s <i>month</i>, put it on that card; if
-    not, leave it on the table.
+    <b>Match by month.</b> Play a card from your hand that&rsquo;s the <b>same month</b> as a table card, onto that
+    card. No match? Play any card face-up on the table.
   </>,
   <>
-    <b>Flip the top card of the draw pile.</b> If it matches a table card, put them together the same way.
+    <b>Flip the top card of the draw pile.</b> If it&rsquo;s the same month as a table card, put it on that card
+    too.
+  </>,
+  <>
+    <b>2 table cards of that month?</b> Whether you played or flipped, capture just <b>one</b> (your choice); the
+    other stays. <b>3?</b> Capture all 3 plus your card.
   </>,
   <>
     <b>Claim your pairs off the table</b> and keep them face-up <b>in front of you</b>. Sort <b>each card</b> by
     its own type, not by pair, so a pair can split across piles (see below).
-  </>,
-  <>
-    <b>Matching is always by month.</b> If <b>2 table cards</b> are the same month as the card you played, capture
-    just <b>one</b> of them (your choice); the other stays. If <b>3</b> are, capture all 3 plus your card. The same
-    goes for the card you flip.
   </>,
   <>
     <b>Check your score.</b> If you reached the target, or scored more since your last Go, call <b>Go</b> or{" "}
@@ -130,8 +130,8 @@ export function RulesPage() {
             ["3 players", "3"],
             ["2 players", "7"],
           ].map(([who, pts]) => (
-            <span key={who} className="text-center leading-none">
-              <span className="block font-serif text-[16pt] font-black text-[#7d0b1a]">{pts}</span>
+            <span key={who} className="self-stretch border-l-[0.75pt] border-[#c99b2b] pl-[6pt] text-center leading-none">
+              <span className="block pt-[1pt] font-serif text-[16pt] font-black text-[#7d0b1a]">{pts}</span>
               <span className="text-[6.8pt] font-semibold">{who}</span>
             </span>
           ))}
@@ -243,16 +243,16 @@ export function RulesPage() {
             Go or Stop?
           </SectionTitle>
           <div className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
-            <div className={`${goStopBox} bg-ink`}>
-              <GoStopLabel en="STOP" ko="스톱" icon={<StopIcon />} />
-              The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
+            <div className={`${goStopBox} bg-hred`}>
+              <GoStopLabel en="GO" ko="고" icon={<GoIcon />} />
+              Keep playing for a bigger payout. You can call again only after your score goes up.
             </div>
             <div className="z-10 -mx-[2pt] grid size-[18pt] place-items-center self-center rounded-full bg-gold font-serif text-[8pt] font-black text-ink shadow-[0_0_0_1.5pt_var(--color-paper)] select-none">
               or
             </div>
-            <div className={`${goStopBox} bg-hred`}>
-              <GoStopLabel en="GO" ko="고" icon={<GoIcon />} />
-              Keep playing for a bigger payout. You can call again only after your score goes up.
+            <div className={`${goStopBox} bg-ink`}>
+              <GoStopLabel en="STOP" ko="스톱" icon={<StopIcon />} />
+              The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
             </div>
           </div>
           <div className="mb-[6pt] grid grid-cols-5 gap-[3pt]">

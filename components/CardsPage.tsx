@@ -4,13 +4,15 @@ import { MiniCard } from "./HwatuCard";
 import { siteUrl } from "@/lib/site";
 import { MonthBlock } from "./MonthBlock";
 import { QrCode } from "./QrCode";
+import { QrExpand } from "./QrExpand";
 import { Ko, SectionTitle, Sheet } from "./Sheet";
 
-const types = [
-  { n: 5, t: "Gwang 광", d: "The 5 most valuable cards. Marked 光.", cls: "bg-gold-soft border-gold" },
-  { n: 9, t: "Animal 열끗", d: "Show an animal or object. Marked 열 here.", cls: "bg-tan border-rule" },
-  { n: 10, t: "Ribbon 띠", d: "Have a paper ribbon: red, blue, or plain.", cls: "bg-hred-soft border-[#e7b9b4]" },
-  { n: 24, t: "Junk 피", d: "Just the plant. A few count double (×2).", cls: "bg-hgreen-soft border-[#c4d3b8]" },
+/** The four card types, each with two example cards fanned in its corner. */
+const types: { n: number; t: string; d: string; cls: string; type: Card["type"]; fan: [Card, Card] }[] = [
+  { n: 5, t: "Gwang 광", d: "The 5 most valuable cards. Marked 光.", cls: "bg-gold-soft border-gold", type: "gwang", fan: [months[0].cards[0], months[7].cards[0]] },
+  { n: 9, t: "Animal 열끗", d: "Show an animal or object. Marked 열 here.", cls: "bg-tan border-rule", type: "animal", fan: [months[6].cards[0], months[9].cards[0]] },
+  { n: 10, t: "Ribbon 띠", d: "Have a paper ribbon: red, blue, or plain.", cls: "bg-hred-soft border-[#e7b9b4]", type: "ribbon", fan: [months[0].cards[1], months[5].cards[1]] },
+  { n: 24, t: "Junk 피", d: "Just the plant. A few count double (×2).", cls: "bg-hgreen-soft border-[#c4d3b8]", type: "pi", fan: [months[2].cards[2], months[10].cards[2]] },
 ];
 
 const monthAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -46,15 +48,16 @@ export function CardsPage() {
     <Sheet className="select-none" folio="Go-Stop Guide · Page 1 of 2 · Art: Spenĉjo (CC BY-SA 4.0) · Icons: Sem (CC BY 4.0)">
       <header className="relative mb-[10pt] border-b-[2pt] border-ink pb-[6pt]">
         <GwangFan />
-        <a
-          href={siteUrl}
-          className="absolute right-0 bottom-[5pt] flex flex-col items-center gap-[1.5pt] no-underline"
+        <QrExpand
+          label={siteUrl.replace(/^https?:\/\//, "")}
+          className="absolute right-0 bottom-[5pt] flex flex-col items-center gap-[1.5pt]"
+          large={<QrCode url={siteUrl} className="size-full rounded-[6px] p-[10px]" />}
         >
           <QrCode url={siteUrl} className="size-[40pt] rounded-[2pt] ring-[0.75pt] ring-rule" />
           <span className="text-[5.8pt] leading-none font-semibold tracking-[0.02em] text-muted">
             {siteUrl.replace(/^https?:\/\//, "")}
           </span>
-        </a>
+        </QrExpand>
         <h1 className="font-serif text-[30pt] leading-[1.15] font-black tracking-[-0.01em]">
           Go-Stop <Ko className="ml-[6pt] text-[22pt] text-hred">고스톱</Ko>
         </h1>
@@ -81,11 +84,25 @@ export function CardsPage() {
           </p>
           <div className="grid grid-cols-4 gap-[5pt]">
             {types.map((t) => (
-              <div key={t.t} className={`rounded-[4pt] border-[0.75pt] px-[5pt] pt-[5pt] pb-[4pt] ${t.cls}`}>
+              <LegendTile
+                key={t.t}
+                setKey={`type-${t.type}`}
+                ids={months.flatMap((m) => m.cards.filter((c) => c.type === t.type).map((c) => c.img ?? ""))}
+                className={`relative block rounded-[4pt] border-[0.75pt] px-[5pt] pt-[5pt] pb-[4pt] ${t.cls}`}
+              >
+                {/* two real cards of this type, fanned in the corner */}
+                <span className="absolute -top-[4pt] right-[4pt] flex" aria-hidden="true">
+                  <span className="-rotate-[9deg]">
+                    <MiniCard card={t.fan[0]} size="h-[22pt] w-[13.5pt]" showTag={false} />
+                  </span>
+                  <span className="-ml-[6pt] translate-y-[1pt] rotate-[8deg]">
+                    <MiniCard card={t.fan[1]} size="h-[22pt] w-[13.5pt]" showTag={false} />
+                  </span>
+                </span>
                 <div className="font-serif text-[13pt] leading-none font-black">{t.n}</div>
                 <div className="mt-[2pt] text-[8pt] font-bold whitespace-nowrap">{t.t}</div>
                 <div className="text-[6.9pt] leading-[1.3] text-muted">{t.d}</div>
-              </div>
+              </LegendTile>
             ))}
           </div>
         </div>
@@ -174,10 +191,16 @@ function GwangFan() {
         return (
           <div
             key={i}
-            className="absolute bottom-0 left-1/2 origin-bottom"
+            className="absolute bottom-0 left-1/2 origin-bottom hover:z-10"
             style={{ transform: `translateX(-50%) translateX(${(i - 2) * 15}pt) rotate(${angle}deg) scale(1.45)` }}
           >
-            <MiniCard card={card} />
+            {/* on hover the card pops out of the fan: lifts, straightens (undoes the fan angle) and grows */}
+            <div
+              className="origin-bottom transition-[translate,rotate,scale,filter] duration-200 ease-out hover:-translate-y-[5pt] hover:scale-[1.15] hover:rotate-[var(--unfan)] hover:drop-shadow-[0_3pt_4pt_rgba(0,0,0,0.35)]"
+              style={{ "--unfan": `${-angle}deg` } as React.CSSProperties}
+            >
+              <MiniCard card={card} />
+            </div>
           </div>
         );
       })}
