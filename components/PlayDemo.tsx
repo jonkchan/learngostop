@@ -304,7 +304,7 @@ function DemoCard({
   );
 }
 
-function CtrlButton({
+export function CtrlButton({
   label,
   onClick,
   icon,
@@ -340,7 +340,7 @@ function CtrlButton({
 
 const AUTOPLAY_KEY = "learngostop:demo-autoplay";
 
-function readAutoplay(): boolean {
+export function readAutoplay(): boolean {
   try {
     return localStorage.getItem(AUTOPLAY_KEY) !== "off";
   } catch {
@@ -348,7 +348,7 @@ function readAutoplay(): boolean {
   }
 }
 
-function writeAutoplay(on: boolean) {
+export function writeAutoplay(on: boolean) {
   try {
     localStorage.setItem(AUTOPLAY_KEY, on ? "on" : "off");
   } catch {
@@ -356,7 +356,7 @@ function writeAutoplay(on: boolean) {
   }
 }
 
-function AutoplaySwitch({
+export function AutoplaySwitch({
   on,
   onChange,
 }: {

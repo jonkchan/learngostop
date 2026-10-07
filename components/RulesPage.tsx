@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cardIds } from "@/lib/deck";
+import { GoStopDemoTrigger } from "./GoStopDemo";
 import { HighlightRow } from "./Highlight";
 import { PlayerArea } from "./PlayerArea";
 import { Ko, SectionTitle, Sheet, Terms } from "./Sheet";
@@ -242,7 +243,7 @@ export function RulesPage() {
           <SectionTitle ko="고 / 스톱" className="mt-[9pt]">
             Go or Stop?
           </SectionTitle>
-          <div className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
+          <GoStopDemoTrigger className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch">
             <div className={`${goStopBox} bg-hred`}>
               <GoStopLabel en="GO" ko="고" icon={<GoIcon />} />
               Keep playing for a bigger payout. You can call again only after your score goes up.
@@ -254,7 +255,7 @@ export function RulesPage() {
               <GoStopLabel en="STOP" ko="스톱" icon={<StopIcon />} />
               The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
             </div>
-          </div>
+          </GoStopDemoTrigger>
           <div className="mb-[6pt] grid grid-cols-5 gap-[3pt]">
             {goLadder.map(([label, effect]) => (
               <div key={label} className="rounded-[3pt] border-[0.75pt] border-rule bg-card py-[2pt] text-center">
