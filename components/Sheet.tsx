@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PlayDemoRow } from "./PlayDemo";
 
 /** One US Letter page. Content is clipped to the sheet so printing always yields exactly one page. */
 export function Sheet({ folio, className = "", children }: { folio: string; className?: string; children: ReactNode }) {
@@ -32,20 +33,37 @@ export function Ko({ className = "", children }: { className?: string; children:
 }
 
 /** A term → definition grid (special plays, penalties). */
-export function Terms({ items }: { items: { term: string; ko: string; def: ReactNode }[] }) {
+export function Terms({
+  items,
+  demos = false,
+}: {
+  items: { term: string; ko: string; def: ReactNode }[];
+  /** Make each row open an animated demo of that play (Special Plays). */
+  demos?: boolean;
+}) {
+  const rowClass =
+    "col-span-2 -mx-[3pt] grid grid-cols-subgrid gap-x-[7pt] rounded-[2pt] px-[3pt] py-[1pt] odd:bg-[#f1e9da]";
   return (
     <dl className="grid grid-cols-[auto_1fr]">
-      {items.map((t) => (
-        <div
-          key={t.term}
-          className="col-span-2 -mx-[3pt] grid grid-cols-subgrid gap-x-[7pt] rounded-[2pt] px-[3pt] py-[1pt] odd:bg-[#f1e9da]"
-        >
-          <dt className="font-bold whitespace-nowrap">
-            {t.term} <Ko className="ml-[2pt] font-bold text-hred">{t.ko}</Ko>
-          </dt>
-          <dd>{t.def}</dd>
-        </div>
-      ))}
+      {items.map((t) => {
+        const cells = (
+          <>
+            <dt className="font-bold whitespace-nowrap">
+              {t.term} <Ko className="ml-[2pt] font-bold text-hred">{t.ko}</Ko>
+            </dt>
+            <dd>{t.def}</dd>
+          </>
+        );
+        return demos ? (
+          <PlayDemoRow key={t.term} play={t.term} className={rowClass}>
+            {cells}
+          </PlayDemoRow>
+        ) : (
+          <div key={t.term} className={rowClass}>
+            {cells}
+          </div>
+        );
+      })}
     </dl>
   );
 }

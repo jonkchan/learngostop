@@ -104,7 +104,7 @@ function MonthDialog({
           }}
         >
           {/* header: flower icon, month name, prev / next */}
-          <div className="mb-[16px] flex items-center gap-[12px]">
+          <div className="mb-[16px] flex items-center gap-[12px] max-sm:mb-[10px]">
             <Image
               src={`/months/${String(month.num).padStart(2, "0")}.png`}
               alt=""
@@ -142,7 +142,7 @@ function MonthDialog({
           </div>
 
           {/* the four cards, big */}
-          <div className="grid grid-cols-2 gap-x-[14px] gap-y-[18px] sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-[14px] gap-y-[18px] max-sm:gap-y-[10px] sm:grid-cols-4">
             {month.cards.map((card, i) => {
               const info = describeCard(month, card);
               return (
@@ -150,7 +150,7 @@ function MonthDialog({
                   key={i}
                   className="m-0 flex flex-col items-center text-center"
                 >
-                  <div className="relative aspect-[103.2/168.2] w-full max-w-[150px] drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)]">
+                  <div className="relative aspect-[103.2/168.2] w-full max-w-[150px] drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] max-sm:h-[min(calc((100dvh-300px)/2),245px)] max-sm:w-auto">
                     {card.img && (
                       <Image
                         src={card.img}
@@ -163,10 +163,10 @@ function MonthDialog({
                     )}
                   </div>
                   <figcaption className="mt-[8px] leading-snug">
-                    <div className="text-[14px] font-bold text-ink">
+                    <div className="text-[14px] font-bold text-ink max-sm:text-[13px]">
                       {info.title}
                     </div>
-                    <div className="text-[12px] text-muted">{info.detail}</div>
+                    <div className="text-[12px] text-muted max-sm:line-clamp-2 max-sm:text-[11px]">{info.detail}</div>
                   </figcaption>
                 </figure>
               );

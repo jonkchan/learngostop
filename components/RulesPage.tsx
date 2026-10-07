@@ -214,7 +214,7 @@ export function RulesPage() {
           <PlayerArea />
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
-          <Terms items={specialPlays} />
+          <Terms items={specialPlays} demos />
         </div>
 
         {/* RIGHT */}
