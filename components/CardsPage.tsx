@@ -21,7 +21,18 @@ const monthAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"
 const card = (m: number, i: number) => months[m - 1].cards[i];
 
 /** Laid out 4 across: ribbon sets + the lone rain ribbon on top, birds / animals / double junk / sake cup below. */
-const allAnimals = months.flatMap((m) => m.cards.filter((c) => c.type === "animal"));
+
+type Kind = "gwang" | "ribbon" | "animal" | "junk" | "both";
+
+/** Lighter versions of the How to Score group tints (gwang gold, ribbons red, animals tan, junk green). */
+const tileTint: Record<Kind, string> = {
+  gwang: "border-[#ecd27a] bg-[#fff6d6]",
+  ribbon: "border-[#f2c3bd] bg-[#fdeeec]",
+  animal: "border-[#e6cf9f] bg-[#fcf3e2]",
+  junk: "border-[#c5ddb4] bg-[#f0f8ea]",
+  // the sake cup counts as an animal or as double junk: half and half
+  both: "border-[#d8d3a8] bg-[linear-gradient(120deg,#fcf3e2_50%,#f0f8ea_50%)]",
+};
 
 const sets: {
   cards: Card[];
@@ -32,15 +43,17 @@ const sets: {
   meaning: string;
   months: number[];
   note?: string;
+  /** Card type, for the tile tint (same colors as the How to Score groups on page 2). */
+  kind: Kind;
 }[] = [
-  { cards: [card(1, 1), card(2, 1), card(3, 1)], ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3] },
-  { cards: [card(6, 1), card(9, 1), card(10, 1)], ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10] },
-  { cards: [card(4, 1), card(5, 1), card(7, 1)], ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7] },
-  { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12] },
-  { cards: [card(2, 0), card(4, 0), card(8, 1)], ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8] },
-  { cards: [card(7, 0), card(10, 0), card(6, 0)], highlight: allAnimals, ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards" },
-  { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12] },
-  { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9] },
+  { cards: [card(1, 1), card(2, 1), card(3, 1)], ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3], kind: "ribbon" },
+  { cards: [card(6, 1), card(9, 1), card(10, 1)], ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10], kind: "ribbon" },
+  { cards: [card(4, 1), card(5, 1), card(7, 1)], ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7], kind: "ribbon" },
+  { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12], kind: "ribbon" },
+  { cards: [card(12, 0)], ko: "비광", name: "Bi-gwang", meaning: "the Rain Man", months: [12], kind: "gwang" },
+  { cards: [card(2, 0), card(4, 0), card(8, 1)], ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8], kind: "animal" },
+  { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12], kind: "junk" },
+  { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9], kind: "both" },
 ];
 
 export function CardsPage() {
@@ -136,7 +149,7 @@ function SetLegend() {
             key={set.name}
             setKey={set.name}
             ids={(set.highlight ?? set.cards).map((c) => c.img ?? "")}
-            className="flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] border-rule bg-card px-[4pt] py-[2pt]"
+            className={`flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] px-[4pt] py-[2pt] ${tileTint[set.kind]}`}
           >
             {/* the actual cards in the set, fanned, so they're easy to spot in the grid above */}
             <span className="flex w-[27pt] flex-none justify-center">
@@ -148,7 +161,7 @@ function SetLegend() {
             </span>
             <div className="min-w-0 flex-1">
               <div className="leading-[1.15] whitespace-nowrap">
-                <Ko className="font-bold">{set.ko}</Ko> <b className="font-semibold">{set.name}</b>
+                <b className="font-semibold">{set.name}</b> <Ko className="font-bold text-hred">{set.ko}</Ko>
               </div>
               <div className="text-[6.8pt] leading-[1.25] whitespace-nowrap text-muted">&ldquo;{set.meaning}&rdquo;</div>
               <div className="mt-[1.5pt] flex items-center gap-[2pt] whitespace-nowrap">
