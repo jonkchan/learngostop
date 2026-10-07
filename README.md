@@ -28,7 +28,17 @@ Built with Next.js (App Router) and Tailwind CSS v4.
 
 The site URL defaults to `https://learngostop.com`; override it with `NEXT_PUBLIC_SITE_URL`.
 
+### Korean font
+
+The serif font is Noto Serif KR cut down to only the characters the site uses (`app/fonts/NotoSerifKR-subset.woff2`, ~60 KB instead of several hundred). **After adding Korean text, regenerate it**, or new syllables will show in a fallback font:
+
+```bash
+pip install fonttools brotli
+python3 scripts/subset-font.py
+```
+
 ## Credits
 
-- **Card art** (`public/cards/`): hwatu card illustrations by [Spenĉjo](https://commons.wikimedia.org/wiki/User:Spen%C4%89jo) on [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Hwatu), licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Files are unmodified, only renamed to `MM-N.svg` (month, position).
+- **Card art** (`public/cards/`): hwatu card illustrations by [Spenĉjo](https://commons.wikimedia.org/wiki/User:Spen%C4%89jo) on [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Hwatu), licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Renamed to `MM-N.svg` (month, position) and optimized with [SVGO](https://github.com/svg/svgo) to shrink the files; the artwork itself is unchanged.
 - **Month icons** (`public/months/`): by Sem for [Fuda Wiki](https://fudawiki.org/en/meta/copyright), licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Renumbered to hwatu month order (November = paulownia, December = willow).
+- **Serif font** (`app/fonts/`): [Noto Serif KR](https://fonts.google.com/noto/specimen/Noto+Serif+KR) by Google, licensed [SIL Open Font License 1.1](https://openfontlicense.org). Subset to the characters the site uses.

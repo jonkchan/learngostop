@@ -33,7 +33,7 @@ body {
 }
 
 /* Shrink the letter-size sheets to fit narrow screens */
-/* --sheet-zoom is set by <FitToScreen> (CSS can't divide 100vw by a length) */
+/* --sheet-zoom is set before first paint by a script in app/layout.tsx, then kept up to date by <FitToScreen> (CSS can't divide 100vw by a length) */
 @media screen and (max-width: 860px) {
   main > section {
     zoom: var(--sheet-zoom, 1);
