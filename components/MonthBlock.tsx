@@ -1,5 +1,6 @@
 import Image from "next/image";
-import type { Month } from "@/lib/deck";
+import { describeCard, type Month } from "@/lib/deck";
+import { HighlightCard } from "./Highlight";
 import { HwatuCard } from "./HwatuCard";
 import { Ko } from "./Sheet";
 
@@ -41,7 +42,11 @@ export function MonthBlock({ month }: { month: Month }) {
       </div>
       <div className="grid grid-cols-4 gap-[5pt]">
         {month.cards.map((card, i) => (
-          <HwatuCard key={i} card={card} />
+          <HighlightCard key={i} id={card.img} tooltip={describeCard(month, card)}
+            align={i === 0 ? "left" : i === 3 ? "right" : "center"}
+          >
+            <HwatuCard card={card} />
+          </HighlightCard>
         ))}
       </div>
     </div>

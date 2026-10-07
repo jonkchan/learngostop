@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { cardIds } from "@/lib/deck";
+import { HighlightRow } from "./Highlight";
 import { PlayerArea } from "./PlayerArea";
 import { Ko, SectionTitle, Sheet, Terms } from "./Sheet";
 
@@ -11,12 +13,13 @@ const steps: ReactNode[] = [
     <b>Flip the top card of the draw pile.</b> If it matches a table card, put them together the same way.
   </>,
   <>
-    <b>Claim your pairs off the table</b> and keep them face-up <b>in front of you</b>, sorted by type (see
-    below).
+    <b>Claim your pairs off the table</b> and keep them face-up <b>in front of you</b>. Sort <b>each card</b> by
+    its own type, not by pair, so a pair can split across piles (see below).
   </>,
   <>
-    <b>Two of your month on the table?</b> Pick one to capture; the other stays. <b>Three?</b> Take all four
-    cards (yours + 3). Same for the flipped card.
+    <b>Matching is always by month.</b> If <b>2 table cards</b> are the same month as the card you played, capture
+    just <b>one</b> of them (your choice); the other stays. If <b>3</b> are, capture all 3 plus your card. The same
+    goes for the card you flip.
   </>,
   <>
     <b>Check your score.</b> If you reached the target, or scored more since your last Go, call <b>Go</b> or{" "}
@@ -27,12 +30,11 @@ const steps: ReactNode[] = [
 const specialPlays = [
   { term: "Ppeok", ko: "뻑", def: <>You match, then flip the <b>same month</b>: all 3 stay stuck. Whoever captures them, each opponent gives them 1 junk (<b>2</b> if it&rsquo;s their own pile, 자뻑).</> },
   { term: "Jjok", ko: "쪽", def: "No match, but the flip matches your card: take both; each opponent gives you 1 junk." },
-  { term: "Ttadak", ko: "따닥", def: "Play the 3rd of a month on the table, flip the 4th: take all 4; each opponent gives you 1 junk." },
+  { term: "Ttadak", ko: "따닥", def: "Play the 3rd of a month, flip the 4th: take all 4; each opponent gives you 1 junk." },
   { term: "Sseul", ko: "쓸", def: "You clear the table. Each opponent gives you 1 junk." },
   { term: "Shake", ko: "흔들기", def: <>3 of a month in your hand? Show all 3 when you play the first one. If you win, score <b>×2</b>.</> },
   { term: "Bomb", ko: "폭탄", def: <>Like Shake, but the 4th is on the table: play all 3 at once, take all 4. Each opponent gives you 1 junk; if you win, <b>×2</b>. Later, take <b>2 flip-only turns</b> (you&rsquo;re 2 cards short).</> },
   { term: "Chongtong", ko: "총통", def: "Dealt all 4 of a month? You win instantly (usually 10 pts)." },
-  { term: "Bonus card", ko: "보너스", def: "A joker in some decks, worth 2–3 junk. Add it to your pile and draw a replacement." },
 ];
 
 const penalties = [
@@ -41,40 +43,48 @@ const penalties = [
   { term: "Meong-tta", ko: "멍따", def: "Winner has 7+ animals: everyone pays ×2." },
 ];
 
-type Row = { name: string; ko?: string; dot?: string; need: ReactNode; pts: string };
-const scoring: { group: string; tint: string; rows: Row[] }[] = [
+type Row = { name: string; ko?: string; dot?: string; need: ReactNode; pts: string; cards: string[] };
+
+const gwang = cardIds((c) => c.type === "gwang");
+const ribbonsOf = (ms: number[]) => cardIds((c, m) => c.type === "ribbon" && ms.includes(m));
+
+const scoring: { group: string; tint: string; cards: string[]; rows: Row[] }[] = [
   {
     group: "Gwang 광",
     tint: "bg-gold-soft",
+    cards: gwang,
     rows: [
-      { name: "Sam-gwang", ko: "삼광", need: <>Any 3 gwang <i>without</i> Rain Man (Dec)</>, pts: "3" },
-      { name: "Bi-sam-gwang", ko: "비삼광", need: <>3 gwang <i>including</i> Rain Man (Dec)</>, pts: "2" },
-      { name: "Sa-gwang", ko: "사광", need: "Any 4 gwang", pts: "4" },
-      { name: "O-gwang", ko: "오광", need: "All 5 gwang", pts: "15" },
+      { name: "Sam-gwang", ko: "삼광", need: <>Any 3 gwang <i>without</i> Rain Man (Dec)</>, pts: "3", cards: cardIds((c, m) => c.type === "gwang" && m !== 12) },
+      { name: "Bi-sam-gwang", ko: "비삼광", need: <>3 gwang <i>including</i> Rain Man (Dec)</>, pts: "2", cards: gwang },
+      { name: "Sa-gwang", ko: "사광", need: "Any 4 gwang", pts: "4", cards: gwang },
+      { name: "O-gwang", ko: "오광", need: "All 5 gwang", pts: "15", cards: gwang },
     ],
   },
   {
     group: "Animals 열끗",
     tint: "bg-tan",
+    cards: cardIds((c) => c.type === "animal"),
     rows: [
-      { name: "Animals", need: "5 animals, +1 pt for each extra", pts: "1+" },
-      { name: "Godori", ko: "고도리", dot: "bg-ink", need: "All 3 birds (Feb, Apr, Aug)", pts: "5" },
+      { name: "Animals", need: "5 animals, +1 pt for each extra", pts: "1+", cards: cardIds((c) => c.type === "animal") },
+      { name: "Godori", ko: "고도리", dot: "bg-ink", need: "All 3 birds (Feb, Apr, Aug)", pts: "5", cards: cardIds((c, m) => c.type === "animal" && [2, 4, 8].includes(m)) },
     ],
   },
   {
     group: "Ribbons 띠",
     tint: "bg-hred-soft",
+    cards: cardIds((c) => c.type === "ribbon"),
     rows: [
-      { name: "Ribbons", need: "5 ribbons, +1 pt for each extra", pts: "1+" },
-      { name: "Hongdan", ko: "홍단", dot: "bg-hred", need: "Red poems: Jan, Feb, Mar", pts: "3" },
-      { name: "Cheongdan", ko: "청단", dot: "bg-hblue", need: "Blue: Jun, Sep, Oct", pts: "3" },
-      { name: "Chodan", ko: "초단", dot: "bg-[#e58a8f]", need: "Plain red: Apr, May, Jul", pts: "3" },
+      { name: "Ribbons", need: "5 ribbons, +1 pt for each extra", pts: "1+", cards: cardIds((c) => c.type === "ribbon") },
+      { name: "Hongdan", ko: "홍단", dot: "bg-hred", need: "Red poems: Jan, Feb, Mar", pts: "3", cards: ribbonsOf([1, 2, 3]) },
+      { name: "Cheongdan", ko: "청단", dot: "bg-hblue", need: "Blue: Jun, Sep, Oct", pts: "3", cards: ribbonsOf([6, 9, 10]) },
+      { name: "Chodan", ko: "초단", dot: "bg-[#e58a8f]", need: "Plain red: Apr, May, Jul", pts: "3", cards: ribbonsOf([4, 5, 7]) },
     ],
   },
   {
     group: "Junk 피",
     tint: "bg-hgreen-soft",
-    rows: [{ name: "Junk", need: "10 junk, +1 pt for each extra (×2 cards count as 2)", pts: "1+" }],
+    cards: cardIds((c) => c.type === "pi"),
+    rows: [{ name: "Junk", need: "10 junk, +1 pt for each extra (×2 cards count as 2)", pts: "1+", cards: cardIds((c) => c.type === "pi") }],
   },
 ];
 
@@ -220,7 +230,7 @@ export function RulesPage() {
             </thead>
             <tbody>
               {scoring.map((g) => (
-                <ScoreGroup key={g.group} group={g.group} tint={g.tint} rows={g.rows} />
+                <ScoreGroup key={g.group} group={g.group} tint={g.tint} cards={g.cards} rows={g.rows} />
               ))}
             </tbody>
           </table>
@@ -288,16 +298,16 @@ export function RulesPage() {
   );
 }
 
-function ScoreGroup({ group, tint, rows }: { group: string; tint: string; rows: Row[] }) {
+function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string; cards: string[]; rows: Row[] }) {
   return (
     <>
-      <tr>
+      <HighlightRow setKey={group} ids={cards}>
         <td colSpan={3} className={`${td} ${tint} pt-[3pt] text-[7.2pt] font-bold tracking-[0.05em] text-hred uppercase`}>
           {group}
         </td>
-      </tr>
+      </HighlightRow>
       {rows.map((r, i) => (
-        <tr key={i}>
+        <HighlightRow key={i} setKey={r.name} ids={r.cards}>
           <td className={`${td} whitespace-nowrap`}>
             {r.dot && <Dot className={r.dot} />}
             {r.name}
@@ -305,7 +315,7 @@ function ScoreGroup({ group, tint, rows }: { group: string; tint: string; rows: 
           </td>
           <td className={td}>{r.need}</td>
           <td className={`${td} text-right font-bold whitespace-nowrap`}>{r.pts}</td>
-        </tr>
+        </HighlightRow>
       ))}
     </>
   );

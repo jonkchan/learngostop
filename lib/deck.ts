@@ -87,3 +87,41 @@ export const months: Month[] = baseMonths.map((m) => ({
   ...m,
   cards: m.cards.map((c, i) => ({ ...c, img: `/cards/${String(m.num).padStart(2, "0")}-${i + 1}.svg` })) as Month["cards"],
 }));
+
+const typeLabel: Record<Card["type"], string> = {
+  gwang: "Gwang 광",
+  animal: "Animal 열끗",
+  ribbon: "Ribbon 띠",
+  pi: "Junk 피",
+};
+
+/** What a card is for, beyond its type: the set it belongs to or its special rule. */
+function cardRole(month: number, card: Card): string | undefined {
+  if (card.type === "gwang") return month === 12 ? "weakest gwang: 3 with it score only 2" : undefined;
+  if (card.type === "animal") {
+    if ([2, 4, 8].includes(month)) return "one of the 3 Godori birds";
+    if (month === 9) return "counts as an animal or double junk";
+  }
+  if (card.type === "ribbon") {
+    if ([1, 2, 3].includes(month)) return "one of the 3 Hongdan (red poem) ribbons";
+    if ([6, 9, 10].includes(month)) return "one of the 3 Cheongdan (blue) ribbons";
+    if ([4, 5, 7].includes(month)) return "one of the 3 Chodan (plain red) ribbons";
+    return "not part of any ribbon set";
+  }
+  if (card.type === "pi" && "tag" in card && card.tag === "×2") return "counts as 2 junk";
+}
+
+/** Tooltip text for a card in the month grid. */
+export function describeCard(month: Month, card: Card) {
+  const role = cardRole(month.num, card);
+  return {
+    title: card.caption,
+    month: `${month.name} ${month.ko}`,
+    detail: role ? `${typeLabel[card.type]} · ${role}` : typeLabel[card.type],
+  };
+}
+
+/** Image ids of every card matching a test, for highlighting sets from the scoring table. */
+export function cardIds(test: (card: Card, month: number) => boolean): string[] {
+  return months.flatMap((m) => m.cards.filter((c) => test(c, m.num)).map((c) => c.img ?? ""));
+}

@@ -1,6 +1,7 @@
 import { CardsPage } from "@/components/CardsPage";
 import { FitToScreen } from "@/components/FitToScreen";
 import { FloatingActions } from "@/components/FloatingActions";
+import { HighlightProvider } from "@/components/Highlight";
 import { RulesPage } from "@/components/RulesPage";
 import { siteDescription, siteName, siteTitle, siteUrl } from "@/lib/site";
 
@@ -30,8 +31,11 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <CardsPage />
-      <RulesPage />
+      {/* shared so the page 1 legend and the page 2 scoring table can both highlight cards */}
+      <HighlightProvider>
+        <CardsPage />
+        <RulesPage />
+      </HighlightProvider>
       <FloatingActions />
       <FitToScreen />
     </main>

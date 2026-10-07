@@ -1,4 +1,5 @@
 import { months, type Card } from "@/lib/deck";
+import { LegendTile, MONTH_GRID_ID } from "./Highlight";
 import { MiniCard } from "./HwatuCard";
 import { siteUrl } from "@/lib/site";
 import { MonthBlock } from "./MonthBlock";
@@ -18,20 +19,31 @@ const monthAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"
 const card = (m: number, i: number) => months[m - 1].cards[i];
 
 /** Laid out 4 across: ribbon sets + the lone rain ribbon on top, birds / animals / double junk / sake cup below. */
-const sets: { cards: Card[]; ko: string; name: string; meaning: string; months: number[]; note?: string }[] = [
+const allAnimals = months.flatMap((m) => m.cards.filter((c) => c.type === "animal"));
+
+const sets: {
+  cards: Card[];
+  /** Cards to highlight in the grid; defaults to `cards`. */
+  highlight?: Card[];
+  ko: string;
+  name: string;
+  meaning: string;
+  months: number[];
+  note?: string;
+}[] = [
   { cards: [card(1, 1), card(2, 1), card(3, 1)], ko: "홍단", name: "Hongdan", meaning: "red ribbons", months: [1, 2, 3] },
   { cards: [card(6, 1), card(9, 1), card(10, 1)], ko: "청단", name: "Cheongdan", meaning: "blue ribbons", months: [6, 9, 10] },
   { cards: [card(4, 1), card(5, 1), card(7, 1)], ko: "초단", name: "Chodan", meaning: "grass ribbons", months: [4, 5, 7] },
   { cards: [card(12, 2)], ko: "비띠", name: "Bi-tti", meaning: "rain ribbon", months: [12] },
   { cards: [card(2, 0), card(4, 0), card(8, 1)], ko: "고도리", name: "Godori", meaning: "five birds", months: [2, 4, 8] },
-  { cards: [card(7, 0), card(10, 0), card(6, 0)], ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards" },
+  { cards: [card(7, 0), card(10, 0), card(6, 0)], highlight: allAnimals, ko: "열끗", name: "Animals", meaning: "marked 열", months: [], note: "9 cards" },
   { cards: [card(11, 1), card(12, 3)], ko: "쌍피", name: "Ssangpi", meaning: "double junk", months: [11, 12] },
   { cards: [card(9, 0)], ko: "술잔", name: "Sake cup", meaning: "animal or ×2 junk", months: [9] },
 ];
 
 export function CardsPage() {
   return (
-    <Sheet folio="Go-Stop Guide · Page 1 of 2 · Art: Spenĉjo (CC BY-SA 4.0) · Icons: Sem (CC BY 4.0)">
+    <Sheet className="select-none" folio="Go-Stop Guide · Page 1 of 2 · Art: Spenĉjo (CC BY-SA 4.0) · Icons: Sem (CC BY 4.0)">
       <header className="relative mb-[10pt] border-b-[2pt] border-ink pb-[6pt]">
         <GwangFan />
         <a
@@ -80,7 +92,7 @@ export function CardsPage() {
       </div>
 
       <SectionTitle ko="월별 패">Matching Cards by Month</SectionTitle>
-      <div className="grid grid-cols-3 gap-x-[12pt] gap-y-[6pt]">
+      <div id={MONTH_GRID_ID} className="grid scroll-mt-[40pt] grid-cols-3 gap-x-[12pt] gap-y-[6pt]">
         {months.map((m) => (
           <MonthBlock key={m.num} month={m} />
         ))}
@@ -98,9 +110,17 @@ function SetLegend() {
       <span className="absolute -top-[5pt] left-[7pt] rounded-[2pt] bg-hred px-[4pt] text-[6pt] leading-[10pt] font-bold tracking-[0.08em] text-white uppercase shadow-[inset_0_0_0_0.75pt_var(--color-gold)]">
         Legend
       </span>
+      <span className="absolute -top-[4pt] left-[44pt] rounded-[2pt] bg-[#f4eddf] px-[3pt] text-[6pt] leading-[8pt] text-muted italic print:hidden">
+        tap a set to find its cards
+      </span>
       <div className="grid grid-cols-4 gap-[4pt] text-[7.4pt]">
         {sets.map((set) => (
-          <div key={set.name} className="flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] border-rule bg-card px-[4pt] py-[2pt]">
+          <LegendTile
+            key={set.name}
+            setKey={set.name}
+            ids={(set.highlight ?? set.cards).map((c) => c.img ?? "")}
+            className="flex items-center gap-[4pt] rounded-[3pt] border-[0.6pt] border-rule bg-card px-[4pt] py-[2pt]"
+          >
             {/* the actual cards in the set, fanned, so they're easy to spot in the grid above */}
             <span className="flex w-[27pt] flex-none justify-center">
               {set.cards.map((c, k) => (
@@ -137,7 +157,7 @@ function SetLegend() {
                 )}
               </div>
             </div>
-          </div>
+          </LegendTile>
         ))}
       </div>
     </div>

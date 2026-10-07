@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
 /** One US Letter page. Content is clipped to the sheet so printing always yields exactly one page. */
-export function Sheet({ folio, children }: { folio: string; children: ReactNode }) {
+export function Sheet({ folio, className = "", children }: { folio: string; className?: string; children: ReactNode }) {
   return (
-    <section className="relative mx-auto my-[0.35in] flex h-[11in] w-[8.5in] flex-col overflow-hidden bg-paper px-[0.48in] pt-[0.42in] pb-[0.36in] shadow-[0_6px_24px_rgba(0,0,0,0.25)] break-before-page first:break-before-auto print:my-0 print:shadow-none">
+    <section className={`relative mx-auto my-[0.35in] flex h-[11in] w-[8.5in] flex-col overflow-hidden bg-paper px-[0.48in] pt-[0.42in] pb-[0.36in] shadow-[0_6px_24px_rgba(0,0,0,0.25)] break-before-page first:break-before-auto print:my-0 print:shadow-none ${className}`}>
       {/* double frame, like a hwatu card edge */}
       <div className="pointer-events-none absolute inset-[0.2in] rounded-[6pt] border-[2pt] border-hred" />
       <div className="pointer-events-none absolute inset-[calc(0.2in+3.5pt)] rounded-[4pt] border-[0.75pt] border-gold" />
