@@ -303,26 +303,26 @@ export function RulesPage() {
               <GoStopRow
                 scenario="gobak"
                 label="Watch how Go-bak plays out"
-                termClassName="font-bold whitespace-nowrap text-hred"
+                termClassName="font-bold whitespace-nowrap"
                 term={
                   <>
-                    Go-bak <Ko>고박</Ko>
+                    Go-bak <Ko className="text-hred">고박</Ko>
                   </>
                 }
                 def={
                   <>
                     You called Go, then someone else wins:{" "}
-                    <b className="text-hred">you pay their winnings for everyone.</b>
+                    <b>you pay their winnings for everyone.</b>
                   </>
                 }
               />
               <GoStopRow
                 scenario="nagari"
                 label="Watch how Nagari plays out"
-                termClassName="font-bold whitespace-nowrap text-hred"
+                termClassName="font-bold whitespace-nowrap"
                 term={
                   <>
-                    Nagari <Ko>나가리</Ko>
+                    Nagari <Ko className="text-hred">나가리</Ko>
                   </>
                 }
                 def={
@@ -353,8 +353,12 @@ function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string;
   return (
     <>
       <HighlightRow setKey={group} ids={cards}>
-        <td colSpan={3} className={`${td} ${tint} pt-[3pt] text-[7.2pt] font-bold tracking-[0.05em] text-hred uppercase`}>
-          {group}
+        <td colSpan={3} className={`${td} ${tint} pt-[3pt] text-[7.2pt] font-bold tracking-[0.05em] uppercase`}>
+          {/* "Gwang 광": English in ink, Korean in red, like the rest of the page */}
+          {group.split(" ")[0]}{" "}
+          <span lang="ko" className="text-hred">
+            {group.split(" ").slice(1).join(" ")}
+          </span>
           <HighlightRowButton setKey={group} label={group} />
         </td>
       </HighlightRow>
