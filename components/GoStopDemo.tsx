@@ -24,7 +24,7 @@ export function GoStopDemoTrigger({ className, children }: { className: string; 
         <button
           type="button"
           aria-label="Show every way Go or Stop can play out"
-          className="open-btn absolute top-[4pt] -left-[11pt] grid select-none size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
+          className="open-btn absolute top-[4pt] -left-[11pt] grid select-none size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100! focus-visible:opacity-100! [@media(hover:hover)]:opacity-0 print:hidden"
         >
           <svg aria-hidden="true" viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
             <path d="M2 1l7 4-7 4z" />
@@ -78,7 +78,7 @@ export function GoStopRow({
           <button
             type="button"
             aria-label={label}
-            className={`open-btn absolute top-[1pt] ${hintPos} grid size-[9pt] cursor-pointer select-none place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden`}
+            className={`open-btn absolute top-[1pt] ${hintPos} grid size-[9pt] cursor-pointer select-none place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100! focus-visible:opacity-100! [@media(hover:hover)]:opacity-0 print:hidden`}
           >
             <svg aria-hidden="true" viewBox="0 0 10 10" className="ml-[0.5pt] size-[4.5pt]" fill="currentColor">
               <path d="M2 1l7 4-7 4z" />

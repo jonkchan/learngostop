@@ -50,10 +50,16 @@ type Row = { name: string; ko?: string; dot?: string; need: ReactNode; pts: stri
 const gwang = cardIds((c) => c.type === "gwang");
 const ribbonsOf = (ms: number[]) => cardIds((c, m) => c.type === "ribbon" && ms.includes(m));
 
-const scoring: { group: string; tint: string; cards: string[]; rows: Row[] }[] = [
+/**
+ * Each group: `tint` for its header row (deep enough to print as a gray band in black and white), `rowTint` (lighter)
+ * for its rows, and `endRule`, a colored rule under its last row. Same color families as the legend tiles.
+ */
+const scoring: { group: string; tint: string; rowTint: string; endRule: string; cards: string[]; rows: Row[] }[] = [
   {
     group: "Gwang 광",
-    tint: "bg-gold-soft",
+    tint: "bg-[#f7d27a]",
+    rowTint: "bg-[#fff6d6]",
+    endRule: "border-b-[1.5pt] border-b-[#c99b2b]",
     cards: gwang,
     rows: [
       { name: "Sam-gwang", ko: "삼광", need: <>Any 3 gwang <i>without</i> Rain Man (Dec)</>, pts: "3", cards: cardIds((c, m) => c.type === "gwang" && m !== 12) },
@@ -64,7 +70,9 @@ const scoring: { group: string; tint: string; cards: string[]; rows: Row[] }[] =
   },
   {
     group: "Animals 열끗",
-    tint: "bg-tan",
+    tint: "bg-[#ebcf9b]",
+    rowTint: "bg-[#fcf3e2]",
+    endRule: "border-b-[1.5pt] border-b-[#b07d3a]",
     cards: cardIds((c) => c.type === "animal"),
     rows: [
       { name: "Animals", need: "5 animals, +1 pt for each extra", pts: "1+", cards: cardIds((c) => c.type === "animal") },
@@ -73,7 +81,9 @@ const scoring: { group: string; tint: string; cards: string[]; rows: Row[] }[] =
   },
   {
     group: "Ribbons 띠",
-    tint: "bg-hred-soft",
+    tint: "bg-[#f6bcb4]",
+    rowTint: "bg-[#fdeeec]",
+    endRule: "border-b-[1.5pt] border-b-[#d0625a]",
     cards: cardIds((c) => c.type === "ribbon"),
     rows: [
       { name: "Ribbons", need: "5 ribbons, +1 pt for each extra", pts: "1+", cards: cardIds((c) => c.type === "ribbon") },
@@ -84,7 +94,9 @@ const scoring: { group: string; tint: string; cards: string[]; rows: Row[] }[] =
   },
   {
     group: "Junk 피",
-    tint: "bg-hgreen-soft",
+    tint: "bg-[#c2e0ab]",
+    rowTint: "bg-[#f0f8ea]",
+    endRule: "border-b-[1.5pt] border-b-[#5f9a4a]",
     cards: cardIds((c) => c.type === "pi"),
     rows: [{ name: "Junk", need: "10 junk, +1 pt for each extra (×2 cards count as 2)", pts: "1+", cards: cardIds((c) => c.type === "pi") }],
   },
@@ -229,7 +241,7 @@ export function RulesPage() {
 
           <SectionTitle ko="특수 상황">Special Plays</SectionTitle>
           <div data-tour="plays">
-            <Terms items={specialPlays} demos rowY="py-[1.2pt]" />
+            <Terms items={specialPlays} demos rowY="py-[1.93pt]" />
           </div>
         </div>
 
@@ -246,7 +258,7 @@ export function RulesPage() {
             </thead>
             <tbody>
               {scoring.map((g) => (
-                <ScoreGroup key={g.group} group={g.group} tint={g.tint} cards={g.cards} rows={g.rows} />
+                <ScoreGroup key={g.group} {...g} />
               ))}
             </tbody>
           </table>
@@ -258,21 +270,21 @@ export function RulesPage() {
           <SectionTitle ko="고 / 스톱" className="mt-[9pt]">
             Go or Stop?
           </SectionTitle>
-          <GoStopDemoTrigger className="mt-[4pt] mb-[7pt] grid grid-cols-[1fr_auto_1fr] items-stretch select-none">
+          <GoStopDemoTrigger className="mt-[4pt] mb-[8pt] grid grid-cols-[1fr_auto_1fr] items-stretch select-none">
             <div className={`${goStopBox} bg-hred`}>
               <GoStopLabel en="GO" ko="고" icon={<GoIcon />} />
-              Keep playing for a bigger payout. You can call again only after your score goes up.
+              Keep playing for a bigger payout. You can call again once your score goes up.
             </div>
             <div className="z-10 -mx-[2pt] grid size-[18pt] place-items-center self-center rounded-full bg-gold font-serif text-[8pt] font-black text-ink shadow-[0_0_0_1.5pt_var(--color-paper)] select-none">
               or
             </div>
             <div className={`${goStopBox} bg-ink`}>
               <GoStopLabel en="STOP" ko="스톱" icon={<StopIcon />} />
-              The hand ends now. Everyone pays you your points × multipliers. This is the safe choice.
+              The safe choice: the hand ends and everyone pays your points × multipliers.
             </div>
           </GoStopDemoTrigger>
           {/* the Go ladder and a worked example of it, in one panel; the example uses the 1 Go step */}
-          <div className="mb-[6pt] rounded-[4pt] border-[0.75pt] border-gold bg-gold-soft p-[3.5pt]">
+          <div className="mb-[7pt] rounded-[4pt] border-[0.75pt] border-gold bg-gold-soft p-[3.5pt]">
             <div className="grid grid-cols-5 gap-[3pt] select-none">
               {goLadder.map(([label, effect], i) => (
                 <div
@@ -333,23 +345,39 @@ export function RulesPage() {
               />
             </dl>
           </div>
-          <h3 className="mt-[10pt] mb-[2pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
+          <h3 className="mt-[10pt] mb-[3.25pt] font-serif text-[9.6pt] leading-[1.15] font-bold">
             Penalties for losers <span className="font-medium text-muted">
               <span lang="ko">박</span> · loser pays ×2
             </span>
           </h3>
           <Terms items={penalties} />
-          <p className="mt-[2pt] text-[7.4pt] text-muted">
-            <b className="text-ink">Penalties stack:</b> Pi-bak + Gwang-bak = <b className="text-ink">×4</b>, on top of
-            any Go bonus.
-          </p>
+          {/* a callout of its own, so it doesn't read as another row of the penalties list */}
+          <div className="mt-[5pt] flex items-center justify-center gap-[5pt] rounded-[3pt] border-[0.75pt] border-dashed border-[#d0625a] bg-[#fdeeec] px-[5pt] py-[2.5pt] text-center text-[7.4pt]">
+            <p>
+              <b>Penalties stack:</b> Pi-bak + Gwang-bak = ×4, plus any Go bonus.
+            </p>
+          </div>
         </div>
       </div>
     </Sheet>
   );
 }
 
-function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string; cards: string[]; rows: Row[] }) {
+function ScoreGroup({
+  group,
+  tint,
+  rowTint,
+  endRule,
+  cards,
+  rows,
+}: {
+  group: string;
+  tint: string;
+  rowTint: string;
+  endRule: string;
+  cards: string[];
+  rows: Row[];
+}) {
   return (
     <>
       <HighlightRow setKey={group} ids={cards}>
@@ -362,18 +390,22 @@ function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string;
           <HighlightRowButton setKey={group} label={group} />
         </td>
       </HighlightRow>
-      {rows.map((r, i) => (
-        <HighlightRow key={i} setKey={r.name} ids={r.cards}>
-          <td className={`${td} whitespace-nowrap`}>
-            {r.dot && <Dot className={r.dot} />}
-            {r.name}
-            {r.ko && <Ko className="ml-[3pt] leading-none text-hred">{r.ko}</Ko>}
-            <HighlightRowButton setKey={r.name} label={r.name} />
-          </td>
-          <td className={td}>{r.need}</td>
-          <td className={`${td} text-right font-bold whitespace-nowrap`}>{r.pts}</td>
-        </HighlightRow>
-      ))}
+      {rows.map((r, i) => {
+        // the group's last row swaps the thin gray rule for its colored one
+        const cell = i === rows.length - 1 ? td.replace("border-b-[0.6pt] border-rule", endRule) : td;
+        return (
+          <HighlightRow key={i} setKey={r.name} ids={r.cards} className={rowTint}>
+            <td className={`${cell} whitespace-nowrap`}>
+              {r.dot && <Dot className={r.dot} />}
+              {r.name}
+              {r.ko && <Ko className="ml-[3pt] leading-none text-hred">{r.ko}</Ko>}
+              <HighlightRowButton setKey={r.name} label={r.name} />
+            </td>
+            <td className={cell}>{r.need}</td>
+            <td className={`${cell} text-right font-bold whitespace-nowrap`}>{r.pts}</td>
+          </HighlightRow>
+        );
+      })}
     </>
   );
 }

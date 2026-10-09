@@ -40,12 +40,13 @@ export function PlayDemoRow({
         className={`${className} group relative cursor-pointer transition-colors hover:bg-gold-soft has-[.open-btn:focus-visible]:outline-[1.5pt] has-[.open-btn:focus-visible]:outline-gold print:bg-transparent`}
       >
         <dt className={termClassName}>
-          {/* small "watch" hint in the left margin, screen only, so it never covers the text.
+          {/* small "watch" hint in the left margin, screen only, so it never covers the text. With a mouse it only
+              appears while hovering the row (touch screens can't hover, so it stays visible there).
               It lives in the <dt> (a row <div> in a <dl> may only hold dt/dd); it's positioned against the row. */}
           <button
             type="button"
             aria-label={`Show how ${play} works`}
-            className="open-btn absolute top-[2pt] -left-[11pt] grid select-none size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100 focus-visible:opacity-100 print:hidden"
+            className="open-btn absolute top-[2pt] -left-[11pt] grid select-none size-[9pt] cursor-pointer place-items-center rounded-full bg-hred text-white opacity-70 outline-none transition-opacity group-hover:opacity-100! focus-visible:opacity-100! [@media(hover:hover)]:opacity-0 print:hidden"
           >
             <svg
               aria-hidden="true"

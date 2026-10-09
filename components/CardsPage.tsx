@@ -26,12 +26,12 @@ type Kind = "gwang" | "ribbon" | "animal" | "junk" | "both";
 
 /** Lighter versions of the How to Score group tints (gwang gold, ribbons red, animals tan, junk green). */
 const tileTint: Record<Kind, string> = {
-  gwang: "border-[#ecd27a] bg-[#fff6d6]",
-  ribbon: "border-[#f2c3bd] bg-[#fdeeec]",
-  animal: "border-[#e6cf9f] bg-[#fcf3e2]",
-  junk: "border-[#c5ddb4] bg-[#f0f8ea]",
+  gwang: "border-[#d6b148] bg-[#fff6d6]",
+  ribbon: "border-[#d98a82] bg-[#fdeeec]",
+  animal: "border-[#c6a466] bg-[#fcf3e2]",
+  junk: "border-[#8fbd76] bg-[#f0f8ea]",
   // the sake cup counts as an animal or as double junk: half and half
-  both: "border-[#d8d3a8] bg-[linear-gradient(120deg,#fcf3e2_50%,#f0f8ea_50%)]",
+  both: "border-[#b3ab6c] bg-[linear-gradient(120deg,#fcf3e2_50%,#f0f8ea_50%)]",
 };
 
 const sets: {
@@ -87,7 +87,9 @@ export function CardsPage() {
             disguised the deck as 12 months of flowers: <b>hanafuda</b>. It reached Korea in the late 1800s as <b>hwatu</b> (화투, &ldquo;battle of
             flowers&rdquo;), and <b>Go-Stop</b> is now <i>the</i> game at Seollal and Chuseok family gatherings.
           </p>
-          <p className="text-[7.4pt] text-muted">Fun fact: Nintendo was founded in 1889 to make hanafuda.</p>
+          <p className="text-[7.4pt] text-ink">
+            <b className="font-semibold">Fun fact:</b> Nintendo was founded in 1889 to make hanafuda.
+          </p>
         </div>
         <div>
           <SectionTitle ko="48장">The Deck</SectionTitle>
