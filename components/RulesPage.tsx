@@ -175,7 +175,7 @@ export function RulesPage() {
                     <br />
                     player
                   </th>,
-                  <th key={`${r}t`} className={`${thNum} bg-hgreen-soft`}>
+                  <th key={`${r}t`} className={`${thNum} ${tableCol}`}>
                     Table
                   </th>,
                 ])}
@@ -196,7 +196,7 @@ export function RulesPage() {
                     <td key={`${r}p`} className={tdNum}>
                       {each}
                     </td>,
-                    <td key={`${r}t`} className={`${tdNum} bg-hgreen-soft`}>
+                    <td key={`${r}t`} className={`${tdNum} ${tableCol}`}>
                       {toTable}
                     </td>,
                   ])}
@@ -381,6 +381,10 @@ function ScoreGroup({ group, tint, cards, rows }: { group: string; tint: string;
 function Dot({ className }: { className: string }) {
   return <span className={`mr-[3pt] inline-block size-[6pt] rounded-full align-[0.5pt] ${className}`} />;
 }
+
+/** The deal table's "Table" columns: a warm gold dark enough to read as gray in black-and-white print, outlined
+ *  so the columns stand apart even without color. */
+const tableCol = "bg-[#f7d27a] border-x-[0.75pt] border-x-[#c99b2b]";
 
 const goStopBox =
   "rounded-[5pt] px-[7pt] pt-[6pt] pb-[6pt] text-white shadow-[inset_0_0_0_1.5pt_var(--color-gold),0_2.5pt_0_rgba(0,0,0,0.22)]";

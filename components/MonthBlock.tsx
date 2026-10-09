@@ -9,7 +9,7 @@ export function MonthBlock({ month }: { month: Month }) {
   return (
     <MonthZoom
       num={month.num}
-      className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[8pt] pt-[6pt] pb-[5pt]"
+      className="rounded-[5pt] border-[0.75pt] border-rule bg-card px-[8pt] pt-[6pt] pb-[5pt] print:border-[#8f826c]"
       style={{
         // colored cap + soft wash in the month's flower color; an inset shadow keeps the layout height unchanged.
         // Passed as a variable so MonthZoom can add its hover outline and shadow on top.

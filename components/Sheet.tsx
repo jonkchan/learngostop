@@ -7,8 +7,9 @@ export function Sheet({ folio, className = "", children }: { folio: string; clas
   return (
     <section className={`relative mx-auto my-[0.35in] flex h-[11in] w-[8.5in] flex-col overflow-hidden bg-paper px-[0.48in] pt-[0.42in] pb-[0.36in] shadow-[0_6px_24px_rgba(0,0,0,0.25)] break-before-page first:break-before-auto print:my-0 print:shadow-none ${className}`}>
       {/* double frame, like a hwatu card edge */}
-      <div className="pointer-events-none absolute inset-[0.2in] rounded-[6pt] border-[2pt] border-hred" />
-      <div className="pointer-events-none absolute inset-[calc(0.2in+3.5pt)] rounded-[4pt] border-[0.75pt] border-gold" />
+      {/* sides sit 0.3in in: most printers can't print the outer ~0.25in, so 0.2in got clipped on paper */}
+      <div className="pointer-events-none absolute inset-x-[0.3in] inset-y-[0.2in] rounded-[6pt] border-[2pt] border-hred" />
+      <div className="pointer-events-none absolute inset-x-[calc(0.3in+3.5pt)] inset-y-[calc(0.2in+3.5pt)] rounded-[4pt] border-[0.75pt] border-gold" />
       {children}
       <div className="absolute inset-x-0 bottom-[0.27in] text-center text-[6.8pt] tracking-[0.08em] text-muted uppercase">
         <span className="bg-paper px-[8pt]">{folio}</span>
