@@ -18,15 +18,18 @@ export function MonthBlock({ month }: { month: Month }) {
       } as React.CSSProperties}
     >
       <div className="mb-[5pt] flex items-center gap-[6pt]">
-        {/* flower icon (Sem, Fuda Wiki, CC BY 4.0) with the month number as a corner badge */}
-        <div className="relative -my-[1pt] size-[18pt] flex-none select-none">
+        {/* flower icon (Sem, Fuda Wiki, CC BY 4.0) in a ring of the month's color, number as a corner badge */}
+        <div
+          className="relative -my-[1pt] grid size-[18pt] flex-none place-items-center rounded-full border-[1pt] bg-card select-none"
+          style={{ borderColor: month.color }}
+        >
           <Image
             src={`/months/${String(month.num).padStart(2, "0")}.png`}
             alt=""
             width={189}
             height={189}
             loading="eager"
-            className="size-full"
+            className="size-[13.5pt]"
           />
           <span
             className="absolute -right-[3pt] -bottom-[2pt] grid size-[10pt] place-items-center rounded-full text-[5.6pt] leading-none font-bold text-white tabular-nums shadow-[0_0_0_1pt_var(--color-card)]"
